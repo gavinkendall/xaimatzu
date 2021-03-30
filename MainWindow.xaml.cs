@@ -1,4 +1,24 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MainWindow.xaml.cs" company="Gavin Kendall">
+//     Copyright (c) 2008-2021 Gavin Kendall
+// </copyright>
+// <author>Gavin Kendall</author>
+// <summary>The main window for the application's interface.</summary>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+//-----------------------------------------------------------------------
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -14,6 +34,8 @@ namespace xaimatzu
     /// </summary>
     public partial class MainWindow : Window
     {
+        private FormRegionSelectWithMouse _formRegionSelectWithMouse;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -21,7 +43,7 @@ namespace xaimatzu
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
         {
-            buttonCaptureNow.IsEnabled = false;
+            buttonTakeScreenshot.IsEnabled = false;
 
             comboBoxScreen.Items.Add("<Select Screen>");
 
@@ -45,7 +67,8 @@ namespace xaimatzu
             Date.SelectedDate = DateTime.Now.Date;
 
             textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
-            textBoxFile.Focus();
+
+            comboBoxScreen.Focus();
         }
 
         private void comboBoxScreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -66,7 +89,7 @@ namespace xaimatzu
 
         private void screenshotAttribute_TextChanged(object sender, TextChangedEventArgs e)
         {
-            buttonCaptureNow.IsEnabled = false;
+            buttonTakeScreenshot.IsEnabled = false;
             imageScreenshotPreview.Source = null;
 
             if (!string.IsNullOrEmpty(textBoxFile.Text) &&
@@ -79,7 +102,7 @@ namespace xaimatzu
                     
                 if (imageScreenshotPreview.Source != null)
                 {
-                    buttonCaptureNow.IsEnabled = true;
+                    buttonTakeScreenshot.IsEnabled = true;
                 }
             }
         }
@@ -105,6 +128,11 @@ namespace xaimatzu
 
                 bitmap = screenBmp;
 
+                if ((bool)checkBoxClipboard.IsChecked)
+                {
+                    Clipboard.SetImage(bitmapSource);
+                }
+
                 return bitmapSource;
             }
             catch
@@ -119,13 +147,27 @@ namespace xaimatzu
             }
         }
 
-        private ImageCodecInfo GetEncoderInfo(string mimeType)
+        private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
         {
-            var encoders = ImageCodecInfo.GetImageEncoders();
-            return encoders.FirstOrDefault(t => t.MimeType == mimeType);
+            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(checkBoxClipboard.IsChecked);
+            _formRegionSelectWithMouse.MouseSelectionCompleted += formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted;
+            _formRegionSelectWithMouse.LoadCanvas();
         }
 
-        private void buttonCaptureNow_Click(object sender, RoutedEventArgs e)
+        private void formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted(object sender, EventArgs e)
+        {
+            int x = _formRegionSelectWithMouse.outputX + 1;
+            int y = _formRegionSelectWithMouse.outputY + 1;
+            int width = _formRegionSelectWithMouse.outputWidth - 2;
+            int height = _formRegionSelectWithMouse.outputHeight - 2;
+
+            textBoxX.Text = x.ToString();
+            textBoxY.Text = y.ToString();
+            textBoxWidth.Text = width.ToString();
+            textBoxHeight.Text = height.ToString();
+        }
+
+        private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(textBoxFile.Text) &&
                 int.TryParse(textBoxX.Text, out int x) &&
@@ -158,9 +200,10 @@ namespace xaimatzu
                     {
                         int jpegQuality = 100;
                         var encoderParams = new EncoderParameters(1);
-                        encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpegQuality);
+                        encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
 
-                        var encoderInfo = GetEncoderInfo("image/jpeg");
+                        var encoders = ImageCodecInfo.GetImageEncoders();
+                        var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
 
                         bitmap.Save(path, encoderInfo, encoderParams);
                     }

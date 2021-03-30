@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="Gavin Kendall">
-//     Copyright (c) 2008-2021 Gavin Kendall
+//     Copyright (c) 2021 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
 // <summary>The main window for the application's interface.</summary>
@@ -19,13 +19,14 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 using System;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace xaimatzu
 {
@@ -34,122 +35,95 @@ namespace xaimatzu
     /// </summary>
     public partial class MainWindow : Window
     {
+        private System.Timers.Timer _timer;
+        private Regex _rgxTime;
+        private About _about;
+        private ImageControls _imageControls;
+        private ScreenCapture _screenCapture;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
+        private delegate void CheckTimedScreenshotDelegate();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            _timer = new System.Timers.Timer(1000);
+            _timer.Elapsed += _timer_Elapsed;
+
+            _about = new About();
+            _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
+            _screenCapture = new ScreenCapture();
+            _imageControls = new ImageControls(new ScreenshotPreview());
         }
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
         {
-            buttonTakeScreenshot.IsEnabled = false;
-
-            comboBoxScreen.Items.Add("<Select Screen>");
+            _imageControls.comboBoxScreen.Items.Add("<Select Screen>");
 
             foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
             {
-                comboBoxScreen.Items.Add(screen.DeviceName);
+                _imageControls.comboBoxScreen.Items.Add(screen.DeviceName);
             }
 
-            comboBoxScreen.SelectedIndex = 0;
+            _imageControls.comboBoxScreen.SelectedIndex = 0;
 
-            comboBoxFormat.Items.Add("BMP");
-            comboBoxFormat.Items.Add("EMF");
-            comboBoxFormat.Items.Add("GIF");
-            comboBoxFormat.Items.Add("JPEG");
-            comboBoxFormat.Items.Add("PNG");
-            comboBoxFormat.Items.Add("TIFF");
-            comboBoxFormat.Items.Add("WMF");
+            _imageControls.comboBoxFormat.Items.Add("BMP");
+            _imageControls.comboBoxFormat.Items.Add("EMF");
+            _imageControls.comboBoxFormat.Items.Add("GIF");
+            _imageControls.comboBoxFormat.Items.Add("JPEG");
+            _imageControls.comboBoxFormat.Items.Add("PNG");
+            _imageControls.comboBoxFormat.Items.Add("TIFF");
+            _imageControls.comboBoxFormat.Items.Add("WMF");
 
-            comboBoxFormat.SelectedIndex = 3;
+            _imageControls.comboBoxFormat.SelectedIndex = 3;
 
-            Date.SelectedDate = DateTime.Now.Date;
+            _imageControls.Date.SelectedDate = DateTime.Now.Date;
 
-            textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
+            _imageControls.textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
 
-            comboBoxScreen.Focus();
+            _timer.Start();
         }
 
-        private void comboBoxScreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
-            {
-                if (comboBoxScreen.SelectedItem.Equals(screen.DeviceName))
-                {
-                    textBoxX.Text = screen.Bounds.X.ToString();
-                    textBoxY.Text = screen.Bounds.Y.ToString();
-                    textBoxWidth.Text = screen.Bounds.Width.ToString();
-                    textBoxHeight.Text = screen.Bounds.Height.ToString();
-                }
-            }
+            e.Cancel = true;
 
-            comboBoxScreen.SelectedIndex = 0;
+            Exit();
         }
 
-        private void screenshotAttribute_TextChanged(object sender, TextChangedEventArgs e)
+        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            buttonTakeScreenshot.IsEnabled = false;
-            imageScreenshotPreview.Source = null;
+            this.Dispatcher.Invoke(new CheckTimedScreenshotDelegate(CheckTimedScreenshot));
+        }
 
-            if (!string.IsNullOrEmpty(textBoxFile.Text) &&
-                int.TryParse(textBoxX.Text, out int x) &&
-                int.TryParse(textBoxY.Text, out int y) &&
-                int.TryParse(textBoxWidth.Text, out int width) &&
-                int.TryParse(textBoxHeight.Text, out int height))
+        private void CheckTimedScreenshot()
+        {
+            if (!string.IsNullOrEmpty(_imageControls.textBoxTime.Text) &&
+                _imageControls.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(DateTime.Now.ToString("yyyy-MM-dd")) &&
+                _rgxTime.IsMatch(_imageControls.textBoxTime.Text) && _imageControls.textBoxTime.Text.Equals(DateTime.Now.ToString("HH:mm:ss")))
             {
-                imageScreenshotPreview.Source = TakeScreenshot(x, y, width, height, out Bitmap bitmap);
-                    
-                if (imageScreenshotPreview.Source != null)
-                {
-                    buttonTakeScreenshot.IsEnabled = true;
-                }
+                buttonTakeScreenshot_Click(null, null);
             }
         }
 
-        private BitmapSource TakeScreenshot(int x, int y, int width, int height, out Bitmap bitmap)
+        private void buttonAbout_Click(object sender, RoutedEventArgs e)
         {
-            BitmapSource bitmapSource = null;
+            _about.Show();
+        }
 
-            try
-            {
-                var screenBmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        private void buttonImageControls_Click(object sender, RoutedEventArgs e)
+        {
+            _imageControls.Show();
+        }
 
-                using (var bmpGraphics = Graphics.FromImage(screenBmp))
-                {
-                    bmpGraphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
-
-                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                        screenBmp.GetHbitmap(),
-                        IntPtr.Zero,
-                        Int32Rect.Empty,
-                        BitmapSizeOptions.FromEmptyOptions());
-                }
-
-                bitmap = screenBmp;
-
-                if ((bool)checkBoxClipboard.IsChecked)
-                {
-                    Clipboard.SetImage(bitmapSource);
-                }
-
-                return bitmapSource;
-            }
-            catch
-            {
-                bitmap = null;
-
-                return null;
-            }
-            finally
-            {
-                GC.Collect();
-            }
+        private void buttonScreenshotPreview_Click(object sender, RoutedEventArgs e)
+        {
+            _imageControls.screenshotPreview.Show();
         }
 
         private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
         {
-            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(checkBoxClipboard.IsChecked);
+            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(_imageControls.checkBoxClipboard.IsChecked);
             _formRegionSelectWithMouse.MouseSelectionCompleted += formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted;
             _formRegionSelectWithMouse.LoadCanvas();
         }
@@ -161,28 +135,31 @@ namespace xaimatzu
             int width = _formRegionSelectWithMouse.outputWidth - 2;
             int height = _formRegionSelectWithMouse.outputHeight - 2;
 
-            textBoxX.Text = x.ToString();
-            textBoxY.Text = y.ToString();
-            textBoxWidth.Text = width.ToString();
-            textBoxHeight.Text = height.ToString();
+            _imageControls.textBoxX.Text = x.ToString();
+            _imageControls.textBoxY.Text = y.ToString();
+            _imageControls.textBoxWidth.Text = width.ToString();
+            _imageControls.textBoxHeight.Text = height.ToString();
         }
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxFile.Text) &&
-                int.TryParse(textBoxX.Text, out int x) &&
-                int.TryParse(textBoxY.Text, out int y) &&
-                int.TryParse(textBoxWidth.Text, out int width) &&
-                int.TryParse(textBoxHeight.Text, out int height))
+            if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
+                int.TryParse(_imageControls.textBoxX.Text, out int x) &&
+                int.TryParse(_imageControls.textBoxY.Text, out int y) &&
+                int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
+                int.TryParse(_imageControls.textBoxHeight.Text, out int height))
             {
-                Hide();
-
-                TakeScreenshot(x, y, width, height, out Bitmap bitmap);
+                _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, out Bitmap bitmap);
 
                 if (bitmap != null)
                 {
-                    string format = comboBoxFormat.SelectedItem.ToString().ToLower();
-                    string path = textBoxFile.Text.Replace("%format%", format);
+                    string format = _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower();
+                    string path = _imageControls.textBoxFile.Text.Replace("%format%", format);
+
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    }
 
                     if (format.Equals("bmp"))
                     {
@@ -222,8 +199,21 @@ namespace xaimatzu
 
                     bitmap.Dispose();
                 }
+            }
+        }
 
-                Show();
+        private void buttonExit_Click(object sender, RoutedEventArgs e)
+        {
+            Exit();
+        }
+
+        private void Exit()
+        {
+            DialogResult dialogResult = (DialogResult)System.Windows.MessageBox.Show("Are you sure you want to exit Xaimatzu?", "Exit Xaimatzu", (MessageBoxButton)MessageBoxButtons.YesNo, (MessageBoxImage)MessageBoxIcon.Question);
+
+            if (dialogResult == System.Windows.Forms.DialogResult.Yes)
+            {
+                Environment.Exit(0);
             }
         }
     }

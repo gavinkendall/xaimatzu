@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="FormRegionSelectWithMouse.cs" company="Gavin Kendall">
-//     Copyright (c) 2008-2021 Gavin Kendall
+//     Copyright (c) 2021 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
-// <summary>A form that covers all the available screens so we can do a mouse-driven region select.</summary>
+// <summary>A form that covers all the available screens so we can do a mouse-driven region select. Imported from the Auto Screen Capture project.</summary>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

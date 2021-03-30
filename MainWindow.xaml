@@ -5,38 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu" Height="477" Width="610.062" Loaded="Main_Loaded" ResizeMode="NoResize">
-    <Window.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Black" Offset="0.55"/>
-            <GradientStop Color="#FFECC43E" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Background>
+        Title="Xaimatzu" Height="194" Width="222.062" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Loaded="Main_Loaded" Icon="xaimatzu.ico">
     <Grid>
-        <Border Background="Black" Margin="10,10,219,200">
-            <Image x:Name="imageScreenshotPreview" Height="238" VerticalAlignment="Top" Stretch="Fill"/>
-        </Border>
-        <Label x:Name="labelScreen" Content="Screen:" HorizontalAlignment="Left" Margin="10,253,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <ComboBox x:Name="comboBoxScreen" HorizontalAlignment="Left" Margin="63,257,0,0" VerticalAlignment="Top" Width="120" IsReadOnly="True" SelectionChanged="comboBoxScreen_SelectionChanged"/>
-        <Label x:Name="labelFormat" Content="Format:" HorizontalAlignment="Left" Margin="210,253,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <ComboBox x:Name="comboBoxFormat" HorizontalAlignment="Left" Margin="265,257,0,0" VerticalAlignment="Top" Width="120" IsReadOnly="True"/>
-        <Label x:Name="labelX" Content="X:" HorizontalAlignment="Left" Margin="10,285,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
-        <Label x:Name="labelY" Content="Y:" HorizontalAlignment="Left" Margin="210,285,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
-        <Label x:Name="labelWidth" Content="Width:" HorizontalAlignment="Left" Margin="10,319,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
-        <Label x:Name="labelHeight" Content="Height:" HorizontalAlignment="Left" Margin="210,319,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
-        <TextBox x:Name="textBoxX" HorizontalAlignment="Left" Height="23" Margin="63,288,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
-        <TextBox x:Name="textBoxY" HorizontalAlignment="Left" Height="23" Margin="265,288,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
-        <TextBox x:Name="textBoxWidth" HorizontalAlignment="Left" Height="23" Margin="63,319,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
-        <TextBox x:Name="textBoxHeight" HorizontalAlignment="Left" Height="23" Margin="265,319,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
-        <DatePicker x:Name="Date" HorizontalAlignment="Left" Margin="63,352,0,0" VerticalAlignment="Top" IsTodayHighlighted="True" Width="120"/>
-        <Label x:Name="labelTime" Content="Time:" HorizontalAlignment="Left" Margin="210,350,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <Label x:Name="labelDate" Content="Date:" HorizontalAlignment="Left" Margin="10,350,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="textBoxTime" Height="23" Margin="265,353,0,0" TextWrapping="Wrap" Width="120" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFE6E6E6"/>
-        <Label x:Name="labelFile" Content="File:" HorizontalAlignment="Left" Margin="10,381,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="textBoxFile" HorizontalAlignment="Left" Height="23" Margin="63,384,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="322" Background="#FFE6E6E6"/>
-        <CheckBox x:Name="checkBoxClipboard" Content="Clipboard" HorizontalAlignment="Left" Margin="14,423,0,0" VerticalAlignment="Top" Foreground="Black"/>
-        <Button x:Name="buttonAbout" Content="About" HorizontalAlignment="Left" Margin="397,10,0,0" VerticalAlignment="Top" Width="197"/>
-        <Button x:Name="buttonRegionSelect" Content="Region Select" HorizontalAlignment="Left" Margin="397,35,0,0" VerticalAlignment="Top" Width="197" Click="buttonRegionSelect_Click"/>
-        <Button x:Name="buttonTakeScreenshot" Content="Take Screenshot" HorizontalAlignment="Left" Margin="397,60,0,0" VerticalAlignment="Top" Width="197" Click="buttonTakeScreenshot_Click"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="buttonAbout" Content="About" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="197" Height="20" Click="buttonAbout_Click"/>
+        <Button x:Name="buttonImageControls" Content="Image Controls" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="197" Click="buttonImageControls_Click" Height="20"/>
+        <Button x:Name="buttonRegionSelect" Content="Region Select" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="197" Click="buttonRegionSelect_Click" Height="20"/>
+        <Button x:Name="buttonScreenshotPreview" Content="Screenshot Preview" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" Width="197" Height="20" Click="buttonScreenshotPreview_Click"/>
+        <Button x:Name="buttonTakeScreenshot" Content="Take Screenshot" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top" Width="197" Click="buttonTakeScreenshot_Click" Height="20"/>
+        <Button x:Name="buttonExit" Content="Exit" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="197" Height="20" Click="buttonExit_Click"/>
     </Grid>
 </Window>

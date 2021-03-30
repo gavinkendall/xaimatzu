@@ -1,0 +1,33 @@
+﻿<Window x:Name="Main" x:Class="xaimatzu.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:xaimatzu"
+        mc:Ignorable="d"
+        Title="Xaimatzu" Height="477" Width="401" Loaded="Main_Loaded" ResizeMode="NoResize" Background="#FF474747">
+    <Grid>
+        <Border Background="Gray" Margin="10,10,11,200">
+            <Image x:Name="imageScreenshotPreview" HorizontalAlignment="Left" Height="238" VerticalAlignment="Top" Width="375" Stretch="Fill"/>
+        </Border>
+        <Label x:Name="labelScreen" Content="Screen:" HorizontalAlignment="Left" Margin="10,253,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ComboBox x:Name="comboBoxScreen" HorizontalAlignment="Left" Margin="63,257,0,0" VerticalAlignment="Top" Width="120" IsReadOnly="True" SelectionChanged="comboBoxScreen_SelectionChanged"/>
+        <Label x:Name="labelFormat" Content="Format:" HorizontalAlignment="Left" Margin="210,253,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ComboBox x:Name="comboBoxFormat" HorizontalAlignment="Left" Margin="265,257,0,0" VerticalAlignment="Top" Width="120" IsReadOnly="True"/>
+        <Label x:Name="labelX" Content="X:" HorizontalAlignment="Left" Margin="10,285,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
+        <Label x:Name="labelY" Content="Y:" HorizontalAlignment="Left" Margin="210,285,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
+        <Label x:Name="labelWidth" Content="Width:" HorizontalAlignment="Left" Margin="10,319,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
+        <Label x:Name="labelHeight" Content="Height:" HorizontalAlignment="Left" Margin="210,319,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="White"/>
+        <TextBox x:Name="textBoxX" HorizontalAlignment="Left" Height="23" Margin="63,288,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
+        <TextBox x:Name="textBoxY" HorizontalAlignment="Left" Height="23" Margin="265,288,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
+        <TextBox x:Name="textBoxWidth" HorizontalAlignment="Left" Height="23" Margin="63,319,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
+        <TextBox x:Name="textBoxHeight" HorizontalAlignment="Left" Height="23" Margin="265,319,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
+        <DatePicker x:Name="Date" HorizontalAlignment="Left" Margin="63,352,0,0" VerticalAlignment="Top" IsTodayHighlighted="True" Width="120"/>
+        <Label x:Name="labelTime" Content="Time:" HorizontalAlignment="Left" Margin="210,350,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <Label x:Name="labelDate" Content="Date:" HorizontalAlignment="Left" Margin="10,350,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="textBoxTime" Height="23" Margin="265,353,0,0" TextWrapping="Wrap" Width="120" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFE6E6E6"/>
+        <Label x:Name="labelFile" Content="File:" HorizontalAlignment="Left" Margin="10,381,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="textBoxFile" HorizontalAlignment="Left" Height="23" Margin="63,384,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="322" Background="#FFE6E6E6"/>
+        <Button x:Name="buttonCaptureNow" Content="Capture Now" HorizontalAlignment="Left" Margin="10,418,0,0" VerticalAlignment="Top" Width="108" Click="buttonCaptureNow_Click"/>
+    </Grid>
+</Window>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu" Height="220" Width="222.062" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Loaded="Main_Loaded" Icon="xaimatzu.ico">
+        Title="Xaimatzu" Height="220" Width="222.062" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Hidden">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

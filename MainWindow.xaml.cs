@@ -27,6 +27,7 @@ using System.Timers;
 using System.Windows;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace xaimatzu
 {
@@ -56,10 +57,7 @@ namespace xaimatzu
             _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
             _screenCapture = new ScreenCapture();
             _imageControls = new ImageControls(new ScreenshotPreview());
-        }
 
-        private void Main_Loaded(object sender, RoutedEventArgs e)
-        {
             _imageControls.comboBoxFormat.Items.Add("BMP");
             _imageControls.comboBoxFormat.Items.Add("EMF");
             _imageControls.comboBoxFormat.Items.Add("GIF");
@@ -75,13 +73,123 @@ namespace xaimatzu
             _imageControls.textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
 
             _timer.Start();
+
+            int visibility = ParseCommandLineArguments();
+
+            Visibility = (Visibility)visibility;
         }
 
         private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
 
-            Exit();
+            Exit(prompt: true);
+        }
+
+        private int ParseCommandLineArguments()
+        {
+            int visibility = 0;
+
+            try
+            {
+                Regex rgxCommandLineOptionX = new Regex(@"^-x=(?<X>\d+)$");
+                Regex rgxCommandLineOptionY = new Regex(@"^-y=(?<Y>\d+)$");
+                Regex rgxCommandLineOptionWidth = new Regex(@"^-width=(?<Width>\d+)$");
+                Regex rgxCommandLineOptionHeight = new Regex(@"^-height=(?<Height>\d+)$");
+                Regex rgxCommandLineOptionDate = new Regex(@"^-date=(?<Year>\d{4})-(?<Month>\d{2})-(?<Day>\d{2})$");
+                Regex rgxCommandLineOptionTime = new Regex(@"^-time=(?<Time>\d{2}:\d{2}:\d{2})$");
+                Regex rgxCommandLineOptionFormat = new Regex(@"^-format=(?<Format>.+)$");
+                Regex rgxCommandLineOptionFile = new Regex(@"^-file=(?<File>.+)$");
+
+                // Prepares all values ready for screen capture.
+                foreach (string arg in Environment.GetCommandLineArgs())
+                {
+                    if (arg.Equals("-kill"))
+                    {
+                        int thisProcessId = Process.GetCurrentProcess().Id;
+
+                        foreach (var process in Process.GetProcessesByName("xaimatzu"))
+                        {
+                            if (!process.Id.Equals(thisProcessId))
+                            {
+                                process.Kill();
+                            }
+                        }
+                    }
+
+                    if (rgxCommandLineOptionX.IsMatch(arg))
+                    {
+                        _imageControls.textBoxX.Text = rgxCommandLineOptionX.Match(arg).Groups["X"].Value;
+                    }
+
+                    if (rgxCommandLineOptionY.IsMatch(arg))
+                    {
+                        _imageControls.textBoxY.Text = rgxCommandLineOptionY.Match(arg).Groups["Y"].Value;
+                    }
+
+                    if (rgxCommandLineOptionWidth.IsMatch(arg))
+                    {
+                        _imageControls.textBoxWidth.Text = rgxCommandLineOptionWidth.Match(arg).Groups["Width"].Value;
+                    }
+
+                    if (rgxCommandLineOptionHeight.IsMatch(arg))
+                    {
+                        _imageControls.textBoxHeight.Text = rgxCommandLineOptionHeight.Match(arg).Groups["Height"].Value;
+                    }
+
+                    if (rgxCommandLineOptionDate.IsMatch(arg))
+                    {
+                        if (int.TryParse(rgxCommandLineOptionDate.Match(arg).Groups["Year"].Value, out int year) &&
+                            int.TryParse(rgxCommandLineOptionDate.Match(arg).Groups["Month"].Value, out int month) &&
+                            int.TryParse(rgxCommandLineOptionDate.Match(arg).Groups["Day"].Value, out int day))
+                        {
+                            DateTime dt = new DateTime(year, month, day);
+
+                            _imageControls.Date.SelectedDate = dt;
+                        }
+                    }
+
+                    if (rgxCommandLineOptionTime.IsMatch(arg))
+                    {
+                        _imageControls.textBoxTime.Text = rgxCommandLineOptionTime.Match(arg).Groups["Time"].Value;
+                    }
+
+                    if (rgxCommandLineOptionFormat.IsMatch(arg))
+                    {
+                        _imageControls.comboBoxFormat.SelectedItem = rgxCommandLineOptionFormat.Match(arg).Groups["Format"].Value.ToUpper();
+                    }
+
+                    if (rgxCommandLineOptionFile.IsMatch(arg))
+                    {
+                        _imageControls.textBoxFile.Text = rgxCommandLineOptionFile.Match(arg).Groups["File"].Value;
+                    }
+                }
+
+                // Takes screenshot when found -capture command line option (now that values are prepared).
+                foreach (string arg in Environment.GetCommandLineArgs())
+                {
+                    if (arg.Equals("-capture"))
+                    {
+                        buttonTakeScreenshot_Click(null, null);
+                    }
+
+                    if (arg.Equals("-exit"))
+                    {
+                        Exit(prompt: false);
+                    }
+
+                    if (arg.Equals("-hide"))
+                    {
+                        visibility = 1;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+
+            return visibility;
         }
 
         private void _timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -146,78 +254,123 @@ namespace xaimatzu
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
-                int.TryParse(_imageControls.textBoxX.Text, out int x) &&
-                int.TryParse(_imageControls.textBoxY.Text, out int y) &&
-                int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
-                int.TryParse(_imageControls.textBoxHeight.Text, out int height))
+            try
             {
-                _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, out Bitmap bitmap);
-
-                if (bitmap != null)
+                if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
+                    int.TryParse(_imageControls.textBoxX.Text, out int x) &&
+                    int.TryParse(_imageControls.textBoxY.Text, out int y) &&
+                    int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
+                    int.TryParse(_imageControls.textBoxHeight.Text, out int height))
                 {
-                    string format = _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower();
-                    string path = _imageControls.textBoxFile.Text.Replace("%format%", format);
+                    DateTime dtNow = DateTime.Now;
 
-                    if (!Directory.Exists(Path.GetDirectoryName(path)))
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    }
+                    _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, out Bitmap bitmap);
 
-                    if (format.Equals("bmp"))
+                    if (bitmap != null)
                     {
-                        bitmap.Save(path, ImageFormat.Bmp);
-                    }
-                    else if (format.Equals("emf"))
-                    {
-                        bitmap.Save(path, ImageFormat.Emf);
-                    }
-                    else if (format.Equals("gif"))
-                    {
-                        bitmap.Save(path, ImageFormat.Gif);
-                    }
-                    else if (format.Equals("jpeg"))
-                    {
-                        int jpegQuality = 100;
-                        var encoderParams = new EncoderParameters(1);
-                        encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
+                        string format = _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower();
+                        string path = ParseMacroTags(_imageControls.textBoxFile.Text, dtNow, format);
 
-                        var encoders = ImageCodecInfo.GetImageEncoders();
-                        var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
+                        if (!Directory.Exists(Path.GetDirectoryName(path)))
+                        {
+                            string dir = Path.GetDirectoryName(path);
 
-                        bitmap.Save(path, encoderInfo, encoderParams);
-                    }
-                    else if (format.Equals("png"))
-                    {
-                        bitmap.Save(path, ImageFormat.Png);
-                    }
-                    else if (format.Equals("tiff"))
-                    {
-                        bitmap.Save(path, ImageFormat.Tiff);
-                    }
-                    else if (format.Equals("wmf"))
-                    {
-                        bitmap.Save(path, ImageFormat.Wmf);
-                    }
+                            if (!string.IsNullOrEmpty(dir))
+                            {
+                                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                            }
+                            else
+                            {
+                                path = AppDomain.CurrentDomain.BaseDirectory + path;
+                            }
+                        }
 
-                    bitmap.Dispose();
+                        if (format.Equals("bmp"))
+                        {
+                            bitmap.Save(path, ImageFormat.Bmp);
+                        }
+                        else if (format.Equals("emf"))
+                        {
+                            bitmap.Save(path, ImageFormat.Emf);
+                        }
+                        else if (format.Equals("gif"))
+                        {
+                            bitmap.Save(path, ImageFormat.Gif);
+                        }
+                        else if (format.Equals("jpeg"))
+                        {
+                            int jpegQuality = 100;
+                            var encoderParams = new EncoderParameters(1);
+                            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
+
+                            var encoders = ImageCodecInfo.GetImageEncoders();
+                            var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
+
+                            bitmap.Save(path, encoderInfo, encoderParams);
+                        }
+                        else if (format.Equals("png"))
+                        {
+                            bitmap.Save(path, ImageFormat.Png);
+                        }
+                        else if (format.Equals("tiff"))
+                        {
+                            bitmap.Save(path, ImageFormat.Tiff);
+                        }
+                        else if (format.Equals("wmf"))
+                        {
+                            bitmap.Save(path, ImageFormat.Wmf);
+                        }
+
+                        bitmap.Dispose();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+        private string ParseMacroTags(string macro, DateTime dt, string format)
+        {
+            macro = macro.Replace("%year%", dt.ToString("yyyy"));
+            macro = macro.Replace("%month%", dt.ToString("MM"));
+            macro = macro.Replace("%day%", dt.ToString("dd"));
+            macro = macro.Replace("%hour%", dt.ToString("HH"));
+            macro = macro.Replace("%minute%", dt.ToString("mm"));
+            macro = macro.Replace("%second%", dt.ToString("ss"));
+            macro = macro.Replace("%millisecond%", dt.ToString("fff"));
+            macro = macro.Replace("%date%", dt.ToString("yyyy-MM-dd"));
+            macro = macro.Replace("%time%", dt.ToString("HH-mm-ss-fff"));
+            macro = macro.Replace("%format%", format);
+
+            return macro;
         }
 
         private void buttonExit_Click(object sender, RoutedEventArgs e)
         {
-            Exit();
+            Exit(prompt: true);
         }
 
-        private void Exit()
+        private void Exit(bool prompt)
         {
+            if (!prompt)
+            {
+                Environment.Exit(0);
+            }
+
             DialogResult dialogResult = (DialogResult)System.Windows.MessageBox.Show("Are you sure you want to exit Xaimatzu?", "Exit Xaimatzu", (MessageBoxButton)MessageBoxButtons.YesNo, (MessageBoxImage)MessageBoxIcon.Question);
 
             if (dialogResult == System.Windows.Forms.DialogResult.Yes)
             {
                 Environment.Exit(0);
             }
+        }
+
+        private void Error(Exception ex)
+        {
+            System.Windows.Forms.MessageBox.Show(ex.Message + " " + ex.StackTrace, "Xaimatzu - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Environment.Exit(1);
         }
     }
 }

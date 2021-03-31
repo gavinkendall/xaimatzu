@@ -30,6 +30,44 @@ The "Save screenshot to file when Region Select completed" option, when enabled,
 When you have everything ready (the X, Y, Width, and Height values are set and the filepath in the "File" field is specified) and you're happy with what will be captured based on what you see in the Screenshot Preview window, click on the "Take Screenshot" button to take a screenshot and save it to the file (which may or may not also be sent to the clipboard depending on the "Send captured image to clipboard when X, Y, Width, Height change" option).
 
 To quit or exit the application click on the "Exit" button or close the small "Xaimatzu" window. A confirmation dialog will appear to confirm if you want to exit Xaimatzu.
+
+You can use these macro tags in your filepath:
+%date%
+%time%
+%year%
+%month%
+%day%
+%hour%
+%minute%
+%second%
+%millisecond%
+%format%
+
+You can provide command line options when running xaimatzu.exe from a command line.
+
+Specify X, Y, Width, Height, image format, and filepath:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%"
+
+Wait for a screenshot to be taken on a specific date at a particular time:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00
+
+Hide while waiting for the date and time to take a screenshot:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00 -hide
+
+Take a screenshot immediately when starting Xaimatzu:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture
+
+Take a screenshot and then exit:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -exit
+
+Hide while a screenshot is taken:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -hide
+
+Hide while a screenshot is taken using %date% and %time% macro tags in the filename:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -capture -hide
+
+Kill all running instances of Xaimatzu while starting a new instance of Xaimatzu:
+xaimatzu.exe -kill
                 </TextBlock>
             </StackPanel>
         </ScrollViewer>

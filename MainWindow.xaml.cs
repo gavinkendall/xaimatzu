@@ -38,6 +38,7 @@ namespace xaimatzu
         private System.Timers.Timer _timer;
         private Regex _rgxTime;
         private About _about;
+        private HowToUse _howToUse;
         private ImageControls _imageControls;
         private ScreenCapture _screenCapture;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
@@ -51,6 +52,7 @@ namespace xaimatzu
             _timer.Elapsed += _timer_Elapsed;
 
             _about = new About();
+            _howToUse = new HowToUse();
             _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
             _screenCapture = new ScreenCapture();
             _imageControls = new ImageControls(new ScreenshotPreview());
@@ -58,15 +60,6 @@ namespace xaimatzu
 
         private void Main_Loaded(object sender, RoutedEventArgs e)
         {
-            _imageControls.comboBoxScreen.Items.Add("<Select Screen>");
-
-            foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
-            {
-                _imageControls.comboBoxScreen.Items.Add(screen.DeviceName);
-            }
-
-            _imageControls.comboBoxScreen.SelectedIndex = 0;
-
             _imageControls.comboBoxFormat.Items.Add("BMP");
             _imageControls.comboBoxFormat.Items.Add("EMF");
             _imageControls.comboBoxFormat.Items.Add("GIF");
@@ -93,7 +86,7 @@ namespace xaimatzu
 
         private void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            this.Dispatcher.Invoke(new CheckTimedScreenshotDelegate(CheckTimedScreenshot));
+            Dispatcher.Invoke(new CheckTimedScreenshotDelegate(CheckTimedScreenshot));
         }
 
         private void CheckTimedScreenshot()
@@ -111,14 +104,14 @@ namespace xaimatzu
             _about.Show();
         }
 
+        private void buttonHowToUse_Click(object sender, RoutedEventArgs e)
+        {
+            _howToUse.Show();
+        }
+
         private void buttonImageControls_Click(object sender, RoutedEventArgs e)
         {
             _imageControls.Show();
-        }
-
-        private void buttonScreenshotPreview_Click(object sender, RoutedEventArgs e)
-        {
-            _imageControls.screenshotPreview.Show();
         }
 
         private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
@@ -139,6 +132,16 @@ namespace xaimatzu
             _imageControls.textBoxY.Text = y.ToString();
             _imageControls.textBoxWidth.Text = width.ToString();
             _imageControls.textBoxHeight.Text = height.ToString();
+
+            if ((bool)_imageControls.checkBoxSave.IsChecked)
+            {
+                buttonTakeScreenshot_Click(sender, null);
+            }
+        }
+
+        private void buttonScreenshotPreview_Click(object sender, RoutedEventArgs e)
+        {
+            _imageControls.screenshotPreview.Show();
         }
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)

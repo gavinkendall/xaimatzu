@@ -41,6 +41,18 @@ namespace xaimatzu
             this.screenshotPreview = screenshotPreview;
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            comboBoxScreen.Items.Add("<Select Screen>");
+
+            foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                comboBoxScreen.Items.Add(screen.DeviceName);
+            }
+
+            comboBoxScreen.SelectedIndex = 0;
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;

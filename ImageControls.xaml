@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu - Image Controls" Height="213" Width="410" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Window_Closing" Icon="xaimatzu.ico">
+        Title="Xaimatzu - Image Controls" Height="232" Width="410" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Window_Closing" Icon="xaimatzu.ico" Loaded="Window_Loaded">
     <Grid>
         <Label x:Name="labelScreen" Content="Screen:" HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="48"/>
         <ComboBox x:Name="comboBoxScreen" HorizontalAlignment="Left" Margin="63,10,0,0" VerticalAlignment="Top" Width="120" IsReadOnly="True" SelectionChanged="comboBoxScreen_SelectionChanged" Height="22"/>
@@ -25,7 +25,7 @@
         <TextBox x:Name="textBoxTime" Height="23" Margin="268,99,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" HorizontalAlignment="Left" Width="123"/>
         <Label x:Name="labelFile" Content="File:" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="31"/>
         <TextBox x:Name="textBoxFile" HorizontalAlignment="Left" Height="23" Margin="63,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="328" Background="#FFE6E6E6"/>
-        <CheckBox x:Name="checkBoxClipboard" Content="Send captured image to clipboard" HorizontalAlignment="Left" Margin="13,161,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="True"/>
-
+        <CheckBox x:Name="checkBoxClipboard" Content="Send captured image to clipboard when X, Y, Width, Height change" HorizontalAlignment="Left" Margin="13,161,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="True"/>
+        <CheckBox x:Name="checkBoxSave" Content="Save screenshot to file when Region Select completed" HorizontalAlignment="Left" Margin="13,181,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="True"/>
     </Grid>
 </Window>

@@ -65,6 +65,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="HowToUse.xaml.cs">
+      <DependentUpon>HowToUse.xaml</DependentUpon>
+    </Compile>
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
@@ -75,6 +78,10 @@
     <Compile Include="ScreenshotPreview.xaml.cs">
       <DependentUpon>ScreenshotPreview.xaml</DependentUpon>
     </Compile>
+    <Page Include="HowToUse.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

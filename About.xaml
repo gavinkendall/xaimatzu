@@ -10,7 +10,7 @@
         <Label Content="Xaimatzu" HorizontalAlignment="Left" Margin="194,10,0,0" VerticalAlignment="Top"/>
         <Label Content="Copyright (c) 2021 Gavin Kendall" HorizontalAlignment="Left" Margin="135,81,0,0" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,114,0,0" TextWrapping="Wrap" Text="This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see &lt;https://www.gnu.org/licenses/&gt;" VerticalAlignment="Top" Height="136" Width="423"/>
-        <Label Content="1.0.0.0" HorizontalAlignment="Left" Margin="201,25,0,0" VerticalAlignment="Top"/>
+        <Label Content="2.0.0.0" HorizontalAlignment="Left" Margin="201,25,0,0" VerticalAlignment="Top"/>
         <Label Content="An artisanal screen capture utility handcrafted for fast and timely screenshots." HorizontalAlignment="Left" Margin="14,49,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

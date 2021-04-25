@@ -45,6 +45,9 @@ namespace xaimatzu
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
         private delegate void CheckTimedScreenshotDelegate();
 
+        private int _applicationFocusDelayBefore = 0;
+        private int _applicationFocusDelayAfter = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -100,6 +103,13 @@ namespace xaimatzu
                 Regex rgxCommandLineOptionTime = new Regex(@"^-time=(?<Time>\d{2}:\d{2}:\d{2})$");
                 Regex rgxCommandLineOptionFormat = new Regex(@"^-format=(?<Format>.+)$");
                 Regex rgxCommandLineOptionFile = new Regex(@"^-file=(?<File>.+)$");
+                Regex rgxCommandLineOptionSave = new Regex(@"^-save$");
+                Regex rgxCommandLineOptionClipboard = new Regex(@"^-clipboard$");
+                Regex rgxCommandLineOptionActiveWindow = new Regex(@"^-activeWindow$");
+                Regex rgxCommandLineOptionActiveWindowTitle = new Regex(@"^-activeWindowTitle=(?<ActiveWindowTitle>.+)$");
+                Regex rgxCommandLineOptionApplicationFocus = new Regex(@"^-applicationFocus=(?<ApplicationFocus>.+)$");
+                Regex rgxCommandLineOptionApplicationFocusDelayBefore = new Regex(@"^-applicationFocusDelayBefore=(?<ApplicationFocusDelayBefore>\d{1,5})$");
+                Regex rgxCommandLineOptionApplicationFocusDelayAfter = new Regex(@"^-applicationFocusDelayAfter=(?<ApplicationFocusDelayAfter>\d{1,5})$");
 
                 // Prepares all values ready for screen capture.
                 foreach (string arg in Environment.GetCommandLineArgs())
@@ -162,6 +172,58 @@ namespace xaimatzu
                     if (rgxCommandLineOptionFile.IsMatch(arg))
                     {
                         _imageControls.textBoxFile.Text = rgxCommandLineOptionFile.Match(arg).Groups["File"].Value;
+                    }
+
+                    if (rgxCommandLineOptionSave.IsMatch(arg))
+                    {
+                        _imageControls.checkBoxSave.IsChecked = true;
+                    }
+
+                    if (rgxCommandLineOptionClipboard.IsMatch(arg))
+                    {
+                        _imageControls.checkBoxClipboard.IsChecked = true;
+                    }
+
+                    if (rgxCommandLineOptionActiveWindow.IsMatch(arg))
+                    {
+                        _imageControls.ActiveWindow = true;
+                    }
+
+                    if (rgxCommandLineOptionActiveWindowTitle.IsMatch(arg))
+                    {
+                        string activeWindowTitle = rgxCommandLineOptionActiveWindowTitle.Match(arg).Groups["ActiveWindowTitle"].Value;
+
+                        if (activeWindowTitle.Length > 0)
+                        {
+                            SetActiveWindowTitle(activeWindowTitle);
+                        }
+                    }
+
+                    if (rgxCommandLineOptionApplicationFocusDelayBefore.IsMatch(arg))
+                    {
+                        int.TryParse(rgxCommandLineOptionApplicationFocusDelayBefore.Match(arg).Groups["ApplicationFocusDelayBefore"].Value, out int applicationFocusDelayBefore);
+
+                        _applicationFocusDelayBefore = applicationFocusDelayBefore;
+                    }
+
+                    if (rgxCommandLineOptionApplicationFocusDelayAfter.IsMatch(arg))
+                    {
+                        int.TryParse(rgxCommandLineOptionApplicationFocusDelayAfter.Match(arg).Groups["ApplicationFocusDelayAfter"].Value, out int applicationFocusDelayAfter);
+
+                        _applicationFocusDelayAfter = applicationFocusDelayAfter;
+                    }
+                }
+
+                foreach (string arg in Environment.GetCommandLineArgs())
+                {
+                    if (rgxCommandLineOptionApplicationFocus.IsMatch(arg))
+                    {
+                        string applicationFocus = rgxCommandLineOptionApplicationFocus.Match(arg).Groups["ApplicationFocus"].Value;
+
+                        if (applicationFocus.Length > 0)
+                        {
+                            SetApplicationFocus(applicationFocus);
+                        }
                     }
                 }
 
@@ -256,73 +318,85 @@ namespace xaimatzu
         {
             try
             {
-                if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
-                    int.TryParse(_imageControls.textBoxX.Text, out int x) &&
-                    int.TryParse(_imageControls.textBoxY.Text, out int y) &&
-                    int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
-                    int.TryParse(_imageControls.textBoxHeight.Text, out int height))
+                DateTime dtNow = DateTime.Now;
+
+                Bitmap bitmap = null;
+
+                if (_imageControls.ActiveWindow)
                 {
-                    DateTime dtNow = DateTime.Now;
-
-                    _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, out Bitmap bitmap);
-
-                    if (bitmap != null)
+                    if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text))
                     {
-                        string format = _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower();
-                        string path = ParseMacroTags(_imageControls.textBoxFile.Text, dtNow, format);
-
-                        if (!Directory.Exists(Path.GetDirectoryName(path)))
-                        {
-                            string dir = Path.GetDirectoryName(path);
-
-                            if (!string.IsNullOrEmpty(dir))
-                            {
-                                Directory.CreateDirectory(Path.GetDirectoryName(path));
-                            }
-                            else
-                            {
-                                path = AppDomain.CurrentDomain.BaseDirectory + path;
-                            }
-                        }
-
-                        if (format.Equals("bmp"))
-                        {
-                            bitmap.Save(path, ImageFormat.Bmp);
-                        }
-                        else if (format.Equals("emf"))
-                        {
-                            bitmap.Save(path, ImageFormat.Emf);
-                        }
-                        else if (format.Equals("gif"))
-                        {
-                            bitmap.Save(path, ImageFormat.Gif);
-                        }
-                        else if (format.Equals("jpeg"))
-                        {
-                            int jpegQuality = 100;
-                            var encoderParams = new EncoderParameters(1);
-                            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
-
-                            var encoders = ImageCodecInfo.GetImageEncoders();
-                            var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
-
-                            bitmap.Save(path, encoderInfo, encoderParams);
-                        }
-                        else if (format.Equals("png"))
-                        {
-                            bitmap.Save(path, ImageFormat.Png);
-                        }
-                        else if (format.Equals("tiff"))
-                        {
-                            bitmap.Save(path, ImageFormat.Tiff);
-                        }
-                        else if (format.Equals("wmf"))
-                        {
-                            bitmap.Save(path, ImageFormat.Wmf);
-                        }
-
-                        bitmap.Dispose();
+                        _screenCapture.TakeScreenshot(0, 0, 0, 0, (bool)_imageControls.checkBoxClipboard.IsChecked, true, out bitmap);
                     }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
+                        int.TryParse(_imageControls.textBoxX.Text, out int x) &&
+                        int.TryParse(_imageControls.textBoxY.Text, out int y) &&
+                        int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
+                        int.TryParse(_imageControls.textBoxHeight.Text, out int height))
+                    {
+                        _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, false, out bitmap);
+                    }
+                }
+
+                if (bitmap != null)
+                {
+                    string format = _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower();
+                    string path = ParseMacroTags(_imageControls.textBoxFile.Text, dtNow, format);
+
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
+                    {
+                        string dir = Path.GetDirectoryName(path);
+
+                        if (!string.IsNullOrEmpty(dir))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(path));
+                        }
+                        else
+                        {
+                            path = AppDomain.CurrentDomain.BaseDirectory + path;
+                        }
+                    }
+
+                    if (format.Equals("bmp"))
+                    {
+                        bitmap.Save(path, ImageFormat.Bmp);
+                    }
+                    else if (format.Equals("emf"))
+                    {
+                        bitmap.Save(path, ImageFormat.Emf);
+                    }
+                    else if (format.Equals("gif"))
+                    {
+                        bitmap.Save(path, ImageFormat.Gif);
+                    }
+                    else if (format.Equals("jpeg"))
+                    {
+                        int jpegQuality = 100;
+                        var encoderParams = new EncoderParameters(1);
+                        encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
+
+                        var encoders = ImageCodecInfo.GetImageEncoders();
+                        var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
+
+                        bitmap.Save(path, encoderInfo, encoderParams);
+                    }
+                    else if (format.Equals("png"))
+                    {
+                        bitmap.Save(path, ImageFormat.Png);
+                    }
+                    else if (format.Equals("tiff"))
+                    {
+                        bitmap.Save(path, ImageFormat.Tiff);
+                    }
+                    else if (format.Equals("wmf"))
+                    {
+                        bitmap.Save(path, ImageFormat.Wmf);
+                    }
+
+                    bitmap.Dispose();
                 }
             }
             catch (Exception ex)
@@ -345,6 +419,32 @@ namespace xaimatzu
             macro = macro.Replace("%format%", format);
 
             return macro;
+        }
+
+        private void SetActiveWindowTitle(string activeWindowTitle)
+        {
+            activeWindowTitle = activeWindowTitle.Trim();
+
+            _imageControls.ActiveWindow = true;
+
+            _screenCapture.ActiveWindowTitle = activeWindowTitle;
+        }
+
+        private void SetApplicationFocus(string applicationFocus)
+        {
+            applicationFocus = applicationFocus.Trim();
+
+            if (_applicationFocusDelayBefore > 0)
+            {
+                System.Threading.Thread.Sleep(_applicationFocusDelayBefore);
+            }
+
+            _screenCapture.SetApplicationFocus(applicationFocus);
+
+            if (_applicationFocusDelayAfter > 0)
+            {
+                System.Threading.Thread.Sleep(_applicationFocusDelayAfter);
+            }
         }
 
         private void buttonExit_Click(object sender, RoutedEventArgs e)

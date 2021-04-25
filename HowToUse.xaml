@@ -23,9 +23,9 @@ The Image Controls window also has a Date control and a Time field for choosing 
 
 Below the Date control and Time field in the Image Controls window is the "File" field specifying the filepath of the file to use for saving the screenshot. The %format% macro tag represents the chosen image format. For example, if the image format is set to PNG then the value of %format% will be replaced with "png". You can use the %format% macro tag anywhere in the filepath.
 
-The "Send captured image to clipboard when X, Y, Width, Height change" option, when enabled, will give the system's clipboard a copy of the captured image whenever the X, Y, Width, and Height values change. This is useful when you want to select an area of the screen with the Region Select button and have the captured image be available in the clipboard when the mouse-driven selection has completed.
+The "Send captured image to clipboard" option, when enabled, will give the system's clipboard a copy of the captured image whenever the X, Y, Width, and Height values change. This is useful when you want to select an area of the screen with the Region Select button and have the captured image be available in the clipboard when the mouse-driven selection has completed.
 
-The "Save screenshot to file when Region Select completed" option, when enabled, will save the screenshot to the specified file when Region Select is used and the mouse-driven selection has completed. The operation performed is exactly as if you had clicked on the "Take Screenshot" button. This is a fast way to take a screenshot of an area of the screen and have it immediately saved to disk.
+The "Save screenshot to file" option, when enabled, will save the screenshot to the specified file when Region Select is used and the mouse-driven selection has completed. The operation performed is exactly as if you had clicked on the "Take Screenshot" button. This is a fast way to take a screenshot of an area of the screen and have it immediately saved to disk.
 
 When you have everything ready (the X, Y, Width, and Height values are set and the filepath in the "File" field is specified) and you're happy with what will be captured based on what you see in the Screenshot Preview window, click on the "Take Screenshot" button to take a screenshot and save it to the file (which may or may not also be sent to the clipboard depending on the "Send captured image to clipboard when X, Y, Width, Height change" option).
 
@@ -45,26 +45,26 @@ You can use these macro tags in your filepath:
 
 You can provide command line options when running xaimatzu.exe from a command line.
 
-Specify X, Y, Width, Height, image format, and filepath:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%"
+Specify X, Y, Width, Height, image format, and filepath then save to disk:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -save
 
-Wait for a screenshot to be taken on a specific date at a particular time:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00
+Wait for a screenshot to be taken on a specific date at a particular time then send the screenshot to the clipboard:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00 -clipboard
 
-Hide while waiting for the date and time to take a screenshot:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00 -hide
+Hide while waiting for the date and time to take a screenshot then save to disk:
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00 -hide -save
 
 Take a screenshot immediately when starting Xaimatzu:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -save
 
 Take a screenshot and then exit:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -exit
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -save -exit
 
 Hide while a screenshot is taken:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -hide
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -hide -save
 
 Hide while a screenshot is taken using %date% and %time% macro tags in the filename:
-xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -capture -hide
+xaimatzu.exe -x=0 -y=0 -width=1024 -height=805 -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -capture -hide -save
 
 Kill all running instances of Xaimatzu while starting a new instance of Xaimatzu:
 xaimatzu.exe -kill

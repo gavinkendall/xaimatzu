@@ -31,6 +31,8 @@ namespace xaimatzu
     public partial class ImageControls : Window
     {
         private ScreenCapture _screenCapture;
+
+        public bool ActiveWindow;
         public ScreenshotPreview screenshotPreview;
 
         public ImageControls(ScreenshotPreview screenshotPreview)
@@ -84,7 +86,7 @@ namespace xaimatzu
                 int.TryParse(textBoxWidth.Text, out int width) &&
                 int.TryParse(textBoxHeight.Text, out int height))
             {
-                BitmapSource bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, (bool)checkBoxClipboard.IsChecked, out Bitmap bitmap);
+                BitmapSource bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, (bool)checkBoxClipboard.IsChecked, false, out Bitmap bitmap);
 
                 if (bitmapSource != null)
                 {

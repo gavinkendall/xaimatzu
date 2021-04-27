@@ -80,19 +80,32 @@ namespace xaimatzu
 
         private void screenshotAttribute_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxFile.Text) &&
-                int.TryParse(textBoxX.Text, out int x) &&
-                int.TryParse(textBoxY.Text, out int y) &&
-                int.TryParse(textBoxWidth.Text, out int width) &&
-                int.TryParse(textBoxHeight.Text, out int height))
-            {
-                BitmapSource bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, (bool)checkBoxClipboard.IsChecked, false, out Bitmap bitmap);
+            UpdatePreview();
+        }
 
-                if (bitmapSource != null)
+        private void UpdatePreview()
+        {
+            try
+            {
+                if (int.TryParse(textBoxX.Text, out int x) &&
+                    int.TryParse(textBoxY.Text, out int y) &&
+                    int.TryParse(textBoxWidth.Text, out int width) &&
+                    int.TryParse(textBoxHeight.Text, out int height))
                 {
-                    screenshotPreview.Title = "Xaimatzu - Screenshot Preview (" + bitmapSource.Width + "x" + bitmapSource.Height + ")";
-                    screenshotPreview.imageScreenshotPreview.Source = bitmapSource;
+                    BitmapSource bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, (bool)checkBoxClipboard.IsChecked, captureActiveWindow: false, out Bitmap bitmap);
+
+                    if (bitmapSource != null && bitmap != null)
+                    {
+                        screenshotPreview.Title = "Xaimatzu - Screenshot Preview (" + bitmapSource.Width + "x" + bitmapSource.Height + ")";
+                        screenshotPreview.imageScreenshotPreview.Source = bitmapSource;
+
+                        bitmap.Dispose();
+                    }
                 }
+            }
+            finally
+            {
+                System.GC.Collect();
             }
         }
     }

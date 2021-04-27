@@ -19,10 +19,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 using System;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Text.RegularExpressions;
@@ -261,8 +258,7 @@ namespace xaimatzu
 
         private void CheckTimedScreenshot()
         {
-            if (!string.IsNullOrEmpty(_imageControls.textBoxTime.Text) &&
-                _imageControls.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(DateTime.Now.ToString("yyyy-MM-dd")) &&
+            if (_imageControls.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(DateTime.Now.ToString("yyyy-MM-dd")) &&
                 _rgxTime.IsMatch(_imageControls.textBoxTime.Text) && _imageControls.textBoxTime.Text.Equals(DateTime.Now.ToString("HH:mm:ss")))
             {
                 buttonTakeScreenshot_Click(null, null);
@@ -318,15 +314,13 @@ namespace xaimatzu
         {
             try
             {
-                DateTime dtNow = DateTime.Now;
-
                 Bitmap bitmap = null;
 
                 if (_imageControls.ActiveWindow)
                 {
                     if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text))
                     {
-                        _screenCapture.TakeScreenshot(0, 0, 0, 0, (bool)_imageControls.checkBoxClipboard.IsChecked, true, out bitmap);
+                        _screenCapture.TakeScreenshot(0, 0, 0, 0, (bool)_imageControls.checkBoxClipboard.IsChecked, captureActiveWindow: true, out bitmap);
                     }
                 }
                 else
@@ -337,88 +331,16 @@ namespace xaimatzu
                         int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
                         int.TryParse(_imageControls.textBoxHeight.Text, out int height))
                     {
-                        _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, false, out bitmap);
+                        _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, captureActiveWindow: false, out bitmap);
                     }
                 }
 
-                if (bitmap != null)
-                {
-                    string format = _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower();
-                    string path = ParseMacroTags(_imageControls.textBoxFile.Text, dtNow, format);
-
-                    if (!Directory.Exists(Path.GetDirectoryName(path)))
-                    {
-                        string dir = Path.GetDirectoryName(path);
-
-                        if (!string.IsNullOrEmpty(dir))
-                        {
-                            Directory.CreateDirectory(Path.GetDirectoryName(path));
-                        }
-                        else
-                        {
-                            path = AppDomain.CurrentDomain.BaseDirectory + path;
-                        }
-                    }
-
-                    if (format.Equals("bmp"))
-                    {
-                        bitmap.Save(path, ImageFormat.Bmp);
-                    }
-                    else if (format.Equals("emf"))
-                    {
-                        bitmap.Save(path, ImageFormat.Emf);
-                    }
-                    else if (format.Equals("gif"))
-                    {
-                        bitmap.Save(path, ImageFormat.Gif);
-                    }
-                    else if (format.Equals("jpeg"))
-                    {
-                        int jpegQuality = 100;
-                        var encoderParams = new EncoderParameters(1);
-                        encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, jpegQuality);
-
-                        var encoders = ImageCodecInfo.GetImageEncoders();
-                        var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
-
-                        bitmap.Save(path, encoderInfo, encoderParams);
-                    }
-                    else if (format.Equals("png"))
-                    {
-                        bitmap.Save(path, ImageFormat.Png);
-                    }
-                    else if (format.Equals("tiff"))
-                    {
-                        bitmap.Save(path, ImageFormat.Tiff);
-                    }
-                    else if (format.Equals("wmf"))
-                    {
-                        bitmap.Save(path, ImageFormat.Wmf);
-                    }
-
-                    bitmap.Dispose();
-                }
+                _screenCapture.SaveScreenshot(bitmap, _imageControls.textBoxFile.Text, _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower());
             }
             catch (Exception ex)
             {
                 Error(ex);
             }
-        }
-
-        private string ParseMacroTags(string macro, DateTime dt, string format)
-        {
-            macro = macro.Replace("%year%", dt.ToString("yyyy"));
-            macro = macro.Replace("%month%", dt.ToString("MM"));
-            macro = macro.Replace("%day%", dt.ToString("dd"));
-            macro = macro.Replace("%hour%", dt.ToString("HH"));
-            macro = macro.Replace("%minute%", dt.ToString("mm"));
-            macro = macro.Replace("%second%", dt.ToString("ss"));
-            macro = macro.Replace("%millisecond%", dt.ToString("fff"));
-            macro = macro.Replace("%date%", dt.ToString("yyyy-MM-dd"));
-            macro = macro.Replace("%time%", dt.ToString("HH-mm-ss-fff"));
-            macro = macro.Replace("%format%", format);
-
-            return macro;
         }
 
         private void SetActiveWindowTitle(string activeWindowTitle)

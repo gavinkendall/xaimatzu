@@ -21,6 +21,9 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -81,6 +84,34 @@ namespace xaimatzu
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         public string ActiveWindowTitle { get; set; }
+
+        private string ParseMacroTags(string macro, DateTime dt, string format, string activeWindowTitle)
+        {
+            // Strip invalid Windows characters in the title.
+            activeWindowTitle = activeWindowTitle.Replace(@"\", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("/", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace(":", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("*", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("?", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("\"", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("<", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace(">", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("|", string.Empty);
+
+            macro = macro.Replace("%year%", dt.ToString("yyyy"));
+            macro = macro.Replace("%month%", dt.ToString("MM"));
+            macro = macro.Replace("%day%", dt.ToString("dd"));
+            macro = macro.Replace("%hour%", dt.ToString("HH"));
+            macro = macro.Replace("%minute%", dt.ToString("mm"));
+            macro = macro.Replace("%second%", dt.ToString("ss"));
+            macro = macro.Replace("%millisecond%", dt.ToString("fff"));
+            macro = macro.Replace("%date%", dt.ToString("yyyy-MM-dd"));
+            macro = macro.Replace("%time%", dt.ToString("HH-mm-ss-fff"));
+            macro = macro.Replace("%format%", format);
+            macro = macro.Replace("%title%", activeWindowTitle);
+
+            return macro;
+        }
 
         public string GetActiveWindowTitle()
         {
@@ -167,32 +198,29 @@ namespace xaimatzu
                 if (!string.IsNullOrEmpty(ActiveWindowTitle) && !GetActiveWindowTitle().ToLower().Contains(ActiveWindowTitle.ToLower()))
                 {
                     bitmap = null;
+
                     return null;
                 }
 
-                Bitmap screenBmp = null;
-
                 if (captureActiveWindow)
                 {
-                    screenBmp = GetActiveWindowBitmap();
+                    bitmap = GetActiveWindowBitmap();
                 }
                 else
                 {
-                    screenBmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 }
 
-                using (var bmpGraphics = Graphics.FromImage(screenBmp))
+                using (var bmpGraphics = Graphics.FromImage(bitmap))
                 {
                     bmpGraphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
 
                     bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                        screenBmp.GetHbitmap(),
+                        bitmap.GetHbitmap(),
                         IntPtr.Zero,
                         Int32Rect.Empty,
                         BitmapSizeOptions.FromEmptyOptions());
                 }
-
-                bitmap = screenBmp;
 
                 if (clipboard)
                 {
@@ -210,6 +238,66 @@ namespace xaimatzu
             finally
             {
                 GC.Collect();
+            }
+        }
+
+        public void SaveScreenshot(Bitmap bitmap, string path, string format)
+        {
+            if (bitmap != null)
+            {
+                path = ParseMacroTags(path, DateTime.Now, format, GetActiveWindowTitle());
+
+                if (!Directory.Exists(Path.GetDirectoryName(path)))
+                {
+                    string dir = Path.GetDirectoryName(path);
+
+                    if (!string.IsNullOrEmpty(dir))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    }
+                    else
+                    {
+                        path = AppDomain.CurrentDomain.BaseDirectory + path;
+                    }
+                }
+
+                if (format.Equals("bmp"))
+                {
+                    bitmap.Save(path, ImageFormat.Bmp);
+                }
+                else if (format.Equals("emf"))
+                {
+                    bitmap.Save(path, ImageFormat.Emf);
+                }
+                else if (format.Equals("gif"))
+                {
+                    bitmap.Save(path, ImageFormat.Gif);
+                }
+                else if (format.Equals("jpeg"))
+                {
+                    int jpegQuality = 100;
+                    var encoderParams = new EncoderParameters(1);
+                    encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpegQuality);
+
+                    var encoders = ImageCodecInfo.GetImageEncoders();
+                    var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
+
+                    bitmap.Save(path, encoderInfo, encoderParams);
+                }
+                else if (format.Equals("png"))
+                {
+                    bitmap.Save(path, ImageFormat.Png);
+                }
+                else if (format.Equals("tiff"))
+                {
+                    bitmap.Save(path, ImageFormat.Tiff);
+                }
+                else if (format.Equals("wmf"))
+                {
+                    bitmap.Save(path, ImageFormat.Wmf);
+                }
+
+                bitmap.Dispose();
             }
         }
     }

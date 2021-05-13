@@ -243,61 +243,68 @@ namespace xaimatzu
 
         public void SaveScreenshot(Bitmap bitmap, string path, string format)
         {
-            if (bitmap != null)
+            try
             {
-                path = ParseMacroTags(path, DateTime.Now, format, GetActiveWindowTitle());
-
-                if (!Directory.Exists(Path.GetDirectoryName(path)))
+                if (bitmap != null)
                 {
-                    string dir = Path.GetDirectoryName(path);
+                    path = ParseMacroTags(path, DateTime.Now, format, GetActiveWindowTitle());
 
-                    if (!string.IsNullOrEmpty(dir))
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
                     {
-                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+                        string dir = Path.GetDirectoryName(path);
+
+                        if (!string.IsNullOrEmpty(dir))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(path));
+                        }
+                        else
+                        {
+                            path = AppDomain.CurrentDomain.BaseDirectory + path;
+                        }
                     }
-                    else
+
+                    if (format.Equals("bmp"))
                     {
-                        path = AppDomain.CurrentDomain.BaseDirectory + path;
+                        bitmap.Save(path, ImageFormat.Bmp);
                     }
-                }
+                    else if (format.Equals("emf"))
+                    {
+                        bitmap.Save(path, ImageFormat.Emf);
+                    }
+                    else if (format.Equals("gif"))
+                    {
+                        bitmap.Save(path, ImageFormat.Gif);
+                    }
+                    else if (format.Equals("jpeg"))
+                    {
+                        int jpegQuality = 100;
+                        var encoderParams = new EncoderParameters(1);
+                        encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpegQuality);
 
-                if (format.Equals("bmp"))
-                {
-                    bitmap.Save(path, ImageFormat.Bmp);
-                }
-                else if (format.Equals("emf"))
-                {
-                    bitmap.Save(path, ImageFormat.Emf);
-                }
-                else if (format.Equals("gif"))
-                {
-                    bitmap.Save(path, ImageFormat.Gif);
-                }
-                else if (format.Equals("jpeg"))
-                {
-                    int jpegQuality = 100;
-                    var encoderParams = new EncoderParameters(1);
-                    encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpegQuality);
+                        var encoders = ImageCodecInfo.GetImageEncoders();
+                        var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
 
-                    var encoders = ImageCodecInfo.GetImageEncoders();
-                    var encoderInfo = encoders.FirstOrDefault(t => t.MimeType == "image/jpeg");
+                        bitmap.Save(path, encoderInfo, encoderParams);
+                    }
+                    else if (format.Equals("png"))
+                    {
+                        bitmap.Save(path, ImageFormat.Png);
+                    }
+                    else if (format.Equals("tiff"))
+                    {
+                        bitmap.Save(path, ImageFormat.Tiff);
+                    }
+                    else if (format.Equals("wmf"))
+                    {
+                        bitmap.Save(path, ImageFormat.Wmf);
+                    }
 
-                    bitmap.Save(path, encoderInfo, encoderParams);
+                    bitmap.Dispose();
                 }
-                else if (format.Equals("png"))
-                {
-                    bitmap.Save(path, ImageFormat.Png);
-                }
-                else if (format.Equals("tiff"))
-                {
-                    bitmap.Save(path, ImageFormat.Tiff);
-                }
-                else if (format.Equals("wmf"))
-                {
-                    bitmap.Save(path, ImageFormat.Wmf);
-                }
+            }
+            catch
+            {
 
-                bitmap.Dispose();
             }
         }
     }

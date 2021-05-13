@@ -56,6 +56,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -205,15 +213,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Xaimatzu"
-        "ProductCode" = "8:{BF5188EF-9A43-4D02-8C85-17418A967B52}"
-        "PackageCode" = "8:{A14FBAB1-04A6-440B-94F7-2C5343F2E728}"
+        "ProductCode" = "8:{0F7EBB7C-690E-4787-A5D1-51B7480B7592}"
+        "PackageCode" = "8:{3ED871F6-A4AB-4B2E-A8C0-B904359F8EC0}"
         "UpgradeCode" = "8:{16AE1885-233E-4B81-83D7-2A393D144FF5}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.0"
+        "ProductVersion" = "8:2.1.0"
         "Manufacturer" = "8:Gavin Kendall"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -755,7 +763,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A79592AA3153430E80FF229EFAF43210"
             {
-            "SourcePath" = "8:..\\obj\\Release\\xaimatzu.exe"
+            "SourcePath" = "8:..\\obj\\Debug\\xaimatzu.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_31ED523CF3464BE1BD92832AFCB6F7D5"

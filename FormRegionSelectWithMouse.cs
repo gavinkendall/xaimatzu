@@ -32,8 +32,6 @@ namespace xaimatzu
     public partial class FormRegionSelectWithMouse : Form
     {
         private bool? _saveToClipboard;
-        private Bitmap _bitmapSource;
-        private Bitmap _bitmapDestination;
 
         private int _selectX;
         private int _selectY;
@@ -107,21 +105,22 @@ namespace xaimatzu
             Width = width;
             Height = height;
 
-            Hide();
+            Bitmap bitmap = new Bitmap(width, height);
 
-            _bitmapSource = new Bitmap(width, height);
-
-            Graphics graphics = Graphics.FromImage(_bitmapSource as Image);
-            graphics.CopyFromScreen(0, 0, 0, 0, _bitmapSource.Size);
-
-            using (MemoryStream s = new MemoryStream())
+            using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                _bitmapSource.Save(s, System.Drawing.Imaging.ImageFormat.Bmp);
-                _bitmapSource.Dispose();
+                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
 
-                pictureBoxMouseCanvas.Size = new Size(Width, Height);
-                pictureBoxMouseCanvas.Image = Image.FromStream(s);
+                using (MemoryStream s = new MemoryStream())
+                {
+                    bitmap.Save(s, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                    pictureBoxMouseCanvas.Size = new Size(Width, Height);
+                    pictureBoxMouseCanvas.Image = Image.FromStream(s);
+                }
             }
+
+            bitmap.Dispose();
 
             Show();
 
@@ -130,7 +129,10 @@ namespace xaimatzu
 
         private void pictureBoxMouseCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if (pictureBoxMouseCanvas.Image == null || _selectPen == null) return;
+            if (pictureBoxMouseCanvas.Image == null || _selectPen == null)
+            {
+                return;
+            }
 
             pictureBoxMouseCanvas.Refresh();
 
@@ -158,7 +160,10 @@ namespace xaimatzu
 
         private void pictureBoxMouseCanvas_MouseUp(object sender, MouseEventArgs e)
         {
-            if (pictureBoxMouseCanvas.Image == null || _selectPen == null) return;
+            if (pictureBoxMouseCanvas.Image == null || _selectPen == null)
+            {
+                return;
+            }
 
             if (e.Button == MouseButtons.Left)
             {
@@ -170,11 +175,32 @@ namespace xaimatzu
                 pictureBoxMouseCanvas.CreateGraphics().DrawRectangle(_selectPen, _selectX, _selectY, _selectWidth, _selectHeight);
             }
 
-            Bitmap bitmap = SelectBitmap();
+            Bitmap bitmapSource = null;
 
-            if (bitmap != null)
+            if (_selectWidth > 0)
             {
-                SaveToClipboard(bitmap);
+                Rectangle rect = new Rectangle(_selectX, _selectY, _selectWidth, _selectHeight);
+
+                Bitmap bitmapDestination = new Bitmap(pictureBoxMouseCanvas.Image, pictureBoxMouseCanvas.Width, pictureBoxMouseCanvas.Height);
+                bitmapSource = new Bitmap(_selectWidth, _selectHeight);
+
+                using (Graphics g = Graphics.FromImage(bitmapSource))
+                {
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.CompositingQuality = CompositingQuality.HighQuality;
+                    g.DrawImage(bitmapDestination, 0, 0, rect, GraphicsUnit.Pixel);
+                }
+
+                bitmapDestination.Dispose();
+            }
+
+            if (bitmapSource != null)
+            {
+                if ((bool)_saveToClipboard)
+                {
+                    SaveToClipboard(bitmapSource);
+                }
 
                 outputX = _selectX;
                 outputY = _selectY;
@@ -182,6 +208,8 @@ namespace xaimatzu
                 outputHeight = _selectHeight;
 
                 CompleteMouseSelection(sender, e);
+
+                bitmapSource.Dispose();
             }
 
             Cursor = Cursors.Arrow;
@@ -189,40 +217,13 @@ namespace xaimatzu
             Close();
         }
 
-        private Bitmap SelectBitmap()
-        {
-
-            if (_selectWidth > 0)
-            {
-                Rectangle rect = new Rectangle(_selectX, _selectY, _selectWidth, _selectHeight);
-                _bitmapDestination = new Bitmap(pictureBoxMouseCanvas.Image, pictureBoxMouseCanvas.Width, pictureBoxMouseCanvas.Height);
-
-                _bitmapSource = new Bitmap(_selectWidth, _selectHeight);
-
-                using (Graphics g = Graphics.FromImage(_bitmapSource))
-                {
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    g.CompositingQuality = CompositingQuality.HighQuality;
-                    g.DrawImage(_bitmapDestination, 0, 0, rect, GraphicsUnit.Pixel);
-                }
-
-                return _bitmapSource;
-            }
-
-            return null;
-        }
-
         private void SaveToClipboard(Bitmap bitmap)
         {
-            if ((bool)!_saveToClipboard)
-            {
-                return;
-            }
-
             if (bitmap != null)
             {
                 Clipboard.SetImage(bitmap);
+
+                bitmap.Dispose();
             }
         }
     }

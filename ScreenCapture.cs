@@ -48,6 +48,10 @@ namespace xaimatzu
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteObject([In] IntPtr hObject);
+
         internal enum ShowWindowCommands : int
         {
             Hide = 0,
@@ -189,56 +193,57 @@ namespace xaimatzu
             }
         }
 
-        public BitmapSource TakeScreenshot(int x, int y, int width, int height, bool clipboard, bool captureActiveWindow, out Bitmap bitmap)
+        public BitmapSource TakeScreenshot(int x, int y, int width, int height, bool captureActiveWindow, out Bitmap bitmap)
         {
-            BitmapSource bitmapSource = null;
-
-            try
-            {
-                if (!string.IsNullOrEmpty(ActiveWindowTitle) && !GetActiveWindowTitle().ToLower().Contains(ActiveWindowTitle.ToLower()))
-                {
-                    bitmap = null;
-
-                    return null;
-                }
-
-                if (captureActiveWindow)
-                {
-                    bitmap = GetActiveWindowBitmap();
-                }
-                else
-                {
-                    bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                }
-
-                using (var bmpGraphics = Graphics.FromImage(bitmap))
-                {
-                    bmpGraphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
-
-                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                        bitmap.GetHbitmap(),
-                        IntPtr.Zero,
-                        Int32Rect.Empty,
-                        BitmapSizeOptions.FromEmptyOptions());
-                }
-
-                if (clipboard)
-                {
-                    Clipboard.SetImage(bitmapSource);
-                }
-
-                return bitmapSource;
-            }
-            catch
+            if (!string.IsNullOrEmpty(ActiveWindowTitle) && !GetActiveWindowTitle().ToLower().Contains(ActiveWindowTitle.ToLower()))
             {
                 bitmap = null;
 
                 return null;
             }
-            finally
+
+            if (captureActiveWindow)
             {
-                GC.Collect();
+                bitmap = GetActiveWindowBitmap();
             }
+            else
+            {
+                bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            }
+
+            return GetBitmapSource(x, y, width, height, bitmap);
+        }
+
+        private BitmapSource GetBitmapSource(int x, int y, int width, int height, Bitmap bitmap)
+        {
+            BitmapSource bitmapSource = null;
+
+            using (var bmpGraphics = Graphics.FromImage(bitmap))
+            {
+                bmpGraphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
+
+                var handle = bitmap.GetHbitmap();
+
+                try
+                {
+                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+                        handle,
+                        IntPtr.Zero,
+                        Int32Rect.Empty,
+                        BitmapSizeOptions.FromEmptyOptions());
+                }
+                finally
+                {
+                    DeleteObject(handle);
+                }
+            }
+
+            return bitmapSource;
+        }
+
+        public void SendToClipboard(BitmapSource bitmapSource)
+        {
+            Clipboard.SetImage(bitmapSource);
         }
 
         public void SaveScreenshot(Bitmap bitmap, string path, string format)

@@ -25,6 +25,7 @@ using System.Windows;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Media.Imaging;
 
 namespace xaimatzu
 {
@@ -39,6 +40,7 @@ namespace xaimatzu
         private HowToUse _howToUse;
         private ImageControls _imageControls;
         private ScreenCapture _screenCapture;
+        private ScreenshotPreview _screenshotPreview;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
         private delegate void CheckTimedScreenshotDelegate();
 
@@ -56,7 +58,8 @@ namespace xaimatzu
             _howToUse = new HowToUse();
             _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
             _screenCapture = new ScreenCapture();
-            _imageControls = new ImageControls(new ScreenshotPreview());
+            _screenshotPreview = new ScreenshotPreview();
+            _imageControls = new ImageControls(_screenshotPreview);
 
             _imageControls.comboBoxFormat.Items.Add("BMP");
             _imageControls.comboBoxFormat.Items.Add("EMF");
@@ -263,6 +266,8 @@ namespace xaimatzu
             {
                 buttonTakeScreenshot_Click(null, null);
             }
+
+            _imageControls.UpdatePreview();
         }
 
         private void buttonAbout_Click(object sender, RoutedEventArgs e)
@@ -303,6 +308,8 @@ namespace xaimatzu
             {
                 buttonTakeScreenshot_Click(sender, null);
             }
+
+            _formRegionSelectWithMouse.Close();
         }
 
         private void buttonScreenshotPreview_Click(object sender, RoutedEventArgs e)
@@ -312,26 +319,42 @@ namespace xaimatzu
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
+            Bitmap bitmap = null;
+            BitmapSource bitmapSource = null;
+
             try
             {
-                Bitmap bitmap = null;
+                bool clipboard = (bool)_imageControls.checkBoxClipboard.IsChecked;
+
+                int x = 0;
+                int y = 0;
+                int width = 0;
+                int height = 0;
 
                 if (_imageControls.ActiveWindow)
                 {
                     if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text))
                     {
-                        _screenCapture.TakeScreenshot(0, 0, 0, 0, (bool)_imageControls.checkBoxClipboard.IsChecked, captureActiveWindow: true, out bitmap);
+                        bitmapSource = _screenCapture.TakeScreenshot(0, 0, 0, 0, captureActiveWindow: true, out bitmap);
                     }
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
-                        int.TryParse(_imageControls.textBoxX.Text, out int x) &&
-                        int.TryParse(_imageControls.textBoxY.Text, out int y) &&
-                        int.TryParse(_imageControls.textBoxWidth.Text, out int width) &&
-                        int.TryParse(_imageControls.textBoxHeight.Text, out int height))
+                        int.TryParse(_imageControls.textBoxX.Text, out x) &&
+                        int.TryParse(_imageControls.textBoxY.Text, out y) &&
+                        int.TryParse(_imageControls.textBoxWidth.Text, out width) &&
+                        int.TryParse(_imageControls.textBoxHeight.Text, out height))
                     {
-                        _screenCapture.TakeScreenshot(x, y, width, height, (bool)_imageControls.checkBoxClipboard.IsChecked, captureActiveWindow: false, out bitmap);
+                        bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, captureActiveWindow: false, out bitmap);
+                    }
+                }
+
+                if (clipboard)
+                {
+                    if (bitmapSource != null)
+                    {
+                        _screenCapture.SendToClipboard(bitmapSource);
                     }
                 }
 
@@ -340,6 +363,13 @@ namespace xaimatzu
             catch (Exception ex)
             {
                 Error(ex);
+            }
+            finally
+            {
+                if (bitmap != null)
+                {
+                    bitmap.Dispose();
+                }
             }
         }
 

@@ -1,11 +1,11 @@
-﻿<Window x:Class="xaimatzu.HowToUse"
+﻿<Window x:Class="xaimatzu.Help"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu - How To Use" Height="312.683" Width="477.627" Icon="xaimatzu.ico" Closing="Window_Closing" Topmost="True" IsTabStop="False" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Visible">
+        Title="Xaimatzu - Help" Height="312.683" Width="477.627" Icon="xaimatzu.ico" Closing="Window_Closing" Topmost="True" IsTabStop="False" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Visible">
     <Grid>
         <ScrollViewer>
             <StackPanel x:Name="RightPanel"

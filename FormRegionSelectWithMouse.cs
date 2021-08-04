@@ -59,72 +59,9 @@ namespace xaimatzu
         /// </summary>
         public int outputHeight;
 
-        /// <summary>
-        /// Empty constructor.
-        /// </summary>
-        public FormRegionSelectWithMouse(bool? saveToClipboard)
-        {
-            InitializeComponent();
-
-            outputX = 0;
-            outputY = 0;
-            outputWidth = 0;
-            outputHeight = 0;
-
-            _saveToClipboard = saveToClipboard;
-        }
-
-        /// <summary>
-        /// An event handler for handling when the mouse selection has completed for the mouse-driven region capture.
-        /// </summary>
-        public event EventHandler MouseSelectionCompleted;
-
         private void CompleteMouseSelection(object sender, EventArgs e)
         {
             MouseSelectionCompleted?.Invoke(sender, e);
-        }
-
-        /// <summary>
-        /// Loads the canvas.
-        /// </summary>
-        public void LoadCanvas()
-        {
-            Top = 0;
-            Left = 0;
-
-            int width = 0;
-            int height = 0;
-
-            foreach (Screen screen in Screen.AllScreens)
-            {
-                width += screen.Bounds.Width;
-                height += screen.Bounds.Height;
-            }
-
-            WindowState = FormWindowState.Normal;
-            Width = width;
-            Height = height;
-
-            Bitmap bitmap = new Bitmap(width, height);
-
-            using (Graphics graphics = Graphics.FromImage(bitmap))
-            {
-                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
-
-                using (MemoryStream s = new MemoryStream())
-                {
-                    bitmap.Save(s, System.Drawing.Imaging.ImageFormat.Bmp);
-
-                    pictureBoxMouseCanvas.Size = new Size(Width, Height);
-                    pictureBoxMouseCanvas.Image = Image.FromStream(s);
-                }
-            }
-
-            bitmap.Dispose();
-
-            Show();
-
-            Cursor = Cursors.Cross;
         }
 
         private void pictureBoxMouseCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -217,6 +154,11 @@ namespace xaimatzu
             Close();
         }
 
+        /// <summary>
+        /// Saves the bitmap to the clipboard when the mouse-drive selection has completeld.
+        /// Do not confuse this method with the SendToClipboard method that takes a bitmap source when taking a screenshot.
+        /// </summary>
+        /// <param name="bitmap">The bitmap to save to the clipboard.</param>
         private void SaveToClipboard(Bitmap bitmap)
         {
             if (bitmap != null)
@@ -225,6 +167,69 @@ namespace xaimatzu
 
                 bitmap.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Empty constructor.
+        /// </summary>
+        public FormRegionSelectWithMouse(bool? saveToClipboard)
+        {
+            InitializeComponent();
+
+            outputX = 0;
+            outputY = 0;
+            outputWidth = 0;
+            outputHeight = 0;
+
+            _saveToClipboard = saveToClipboard;
+        }
+
+        /// <summary>
+        /// An event handler for handling when the mouse selection has completed for the mouse-driven region capture.
+        /// </summary>
+        public event EventHandler MouseSelectionCompleted;
+
+        /// <summary>
+        /// Loads the canvas.
+        /// </summary>
+        public void LoadCanvas()
+        {
+            Top = 0;
+            Left = 0;
+
+            int width = 0;
+            int height = 0;
+
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                width += screen.Bounds.Width;
+                height += screen.Bounds.Height;
+            }
+
+            WindowState = FormWindowState.Normal;
+            Width = width;
+            Height = height;
+
+            Bitmap bitmap = new Bitmap(width, height);
+
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+
+                using (MemoryStream s = new MemoryStream())
+                {
+                    bitmap.Save(s, System.Drawing.Imaging.ImageFormat.Bmp);
+
+                    pictureBoxMouseCanvas.Size = new Size(Width, Height);
+                    pictureBoxMouseCanvas.Image = Image.FromStream(s);
+                }
+            }
+
+            bitmap.Dispose();
+
+            Show();
+
+            Cursor = Cursors.Cross;
         }
     }
 }

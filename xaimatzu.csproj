@@ -65,8 +65,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="HowToUse.xaml.cs">
-      <DependentUpon>HowToUse.xaml</DependentUpon>
+    <Compile Include="ActiveWindow.xaml.cs">
+      <DependentUpon>ActiveWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationFocus.xaml.cs">
+      <DependentUpon>ApplicationFocus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Help.xaml.cs">
+      <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
@@ -78,7 +84,15 @@
     <Compile Include="ScreenshotPreview.xaml.cs">
       <DependentUpon>ScreenshotPreview.xaml</DependentUpon>
     </Compile>
-    <Page Include="HowToUse.xaml">
+    <Page Include="ActiveWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationFocus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Help.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

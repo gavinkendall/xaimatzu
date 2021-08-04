@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="HowToUse.xaml.cs" company="Gavin Kendall">
+// <copyright file="Help.xaml.cs" company="Gavin Kendall">
 //     Copyright (c) 2021 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
-// <summary>A window to show how to use the application.</summary>
+// <summary>A window to show useful help information.</summary>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@ using System.Windows;
 namespace xaimatzu
 {
     /// <summary>
-    /// Interaction logic for HowToUse.xaml
+    /// Interaction logic for Help.xaml
     /// </summary>
-    public partial class HowToUse : Window
+    public partial class Help : Window
     {
-        public HowToUse()
+        public Help()
         {
             InitializeComponent();
         }

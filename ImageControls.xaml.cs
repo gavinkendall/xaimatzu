@@ -18,6 +18,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
+using System;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,13 +35,15 @@ namespace xaimatzu
 
         public bool ActiveWindow;
         public ScreenshotPreview screenshotPreview;
+        public ApplicationFocus applicationFocus;
 
-        public ImageControls(ScreenshotPreview screenshotPreview)
+        public ImageControls(ScreenCapture screenCapture, ScreenshotPreview screenshotPreview, ApplicationFocus applicationFocus)
         {
             InitializeComponent();
 
-            _screenCapture = new ScreenCapture();
+            _screenCapture = screenCapture;
             this.screenshotPreview = screenshotPreview;
+            this.applicationFocus = applicationFocus;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -80,11 +83,83 @@ namespace xaimatzu
 
         private void screenshotAttribute_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //UpdatePreview();
+            TakeScreenshot();
         }
 
+        /// <summary>
+        /// Takes a screenshot of either the active window or a region of the screen (that could also be sent to the clipboard and/or saved to a file).
+        /// </summary>
+        public void TakeScreenshot()
+        {
+            Bitmap bitmap = null;
+            BitmapSource bitmapSource = null;
+
+            try
+            {
+                applicationFocus.DoApplicationFocus();
+
+                bool clipboard = (bool)checkBoxClipboard.IsChecked;
+
+                int x = 0;
+                int y = 0;
+                int width = 0;
+                int height = 0;
+
+                if (ActiveWindow)
+                {
+                    if (!string.IsNullOrEmpty(textBoxFile.Text))
+                    {
+                        bitmapSource = _screenCapture.TakeScreenshot(0, 0, 0, 0, captureActiveWindow: true, out bitmap);
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(textBoxFile.Text) &&
+                        int.TryParse(textBoxX.Text, out x) &&
+                        int.TryParse(textBoxY.Text, out y) &&
+                        int.TryParse(textBoxWidth.Text, out width) &&
+                        int.TryParse(textBoxHeight.Text, out height))
+                    {
+                        bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, captureActiveWindow: false, out bitmap);
+                    }
+                }
+
+                if (clipboard)
+                {
+                    if (bitmapSource != null)
+                    {
+                        _screenCapture.SendToClipboard(bitmapSource);
+                    }
+                }
+
+                if ((bool)checkBoxSave.IsChecked)
+                {
+                    _screenCapture.SaveScreenshot(bitmap, textBoxFile.Text, comboBoxFormat.SelectedItem.ToString().ToLower());
+                }
+            }
+            catch (Exception)
+            {
+                
+            }
+            finally
+            {
+                if (bitmap != null)
+                {
+                    bitmap.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the screenshot preview window with the selected area of the screen.
+        /// </summary>
         public void UpdatePreview()
         {
+            if (!screenshotPreview.IsVisible)
+            {
+                return;
+            }
+
             if (int.TryParse(textBoxX.Text, out int x) &&
                 int.TryParse(textBoxY.Text, out int y) &&
                 int.TryParse(textBoxWidth.Text, out int width) &&

@@ -19,13 +19,11 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Timers;
 using System.Windows;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Windows.Media.Imaging;
 
 namespace xaimatzu
 {
@@ -37,8 +35,10 @@ namespace xaimatzu
         private System.Timers.Timer _timer;
         private Regex _rgxTime;
         private About _about;
-        private HowToUse _howToUse;
+        private Help _help;
         private ImageControls _imageControls;
+        private ActiveWindow _activeWindow;
+        private ApplicationFocus _applicationFocus;
         private ScreenCapture _screenCapture;
         private ScreenshotPreview _screenshotPreview;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
@@ -47,19 +47,31 @@ namespace xaimatzu
         private int _applicationFocusDelayBefore = 0;
         private int _applicationFocusDelayAfter = 0;
 
+        /// <summary>
+        /// The main window for the application's interface.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
 
+            // We check the given date and time every second.
+            // If they match with the current date/time then we take a screenshot.
+            // We also use this timer elapsed method for updating the screenshot preview window (if it's visible).
             _timer = new System.Timers.Timer(1000);
             _timer.Elapsed += _timer_Elapsed;
 
+            // The various forms to construct.
             _about = new About();
-            _howToUse = new HowToUse();
-            _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
+            _help = new Help();
             _screenCapture = new ScreenCapture();
             _screenshotPreview = new ScreenshotPreview();
-            _imageControls = new ImageControls(_screenshotPreview);
+            _applicationFocus = new ApplicationFocus(_screenCapture);
+            _imageControls = new ImageControls(_screenCapture, _screenshotPreview, _applicationFocus);
+            _activeWindow = new ActiveWindow();
+
+            // The regular expression to use for checking against the provided time in the Time text field.
+            // (format must be HH:mm:ss)
+            _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
 
             _imageControls.comboBoxFormat.Items.Add("BMP");
             _imageControls.comboBoxFormat.Items.Add("EMF");
@@ -69,7 +81,7 @@ namespace xaimatzu
             _imageControls.comboBoxFormat.Items.Add("TIFF");
             _imageControls.comboBoxFormat.Items.Add("WMF");
 
-            _imageControls.comboBoxFormat.SelectedIndex = 3;
+            _imageControls.comboBoxFormat.SelectedIndex = 3; // JPEG is the default image format
 
             _imageControls.Date.SelectedDate = DateTime.Now.Date;
 
@@ -77,9 +89,7 @@ namespace xaimatzu
 
             _timer.Start();
 
-            int visibility = ParseCommandLineArguments();
-
-            Visibility = (Visibility)visibility;
+            Visibility = (Visibility)ParseCommandLineArguments();
         }
 
         private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -222,7 +232,8 @@ namespace xaimatzu
 
                         if (applicationFocus.Length > 0)
                         {
-                            SetApplicationFocus(applicationFocus);
+                            _applicationFocus.RefreshProcessList();
+                            _applicationFocus.DoApplicationFocus(applicationFocus, _applicationFocusDelayBefore, _applicationFocusDelayAfter);
                         }
                     }
                 }
@@ -232,7 +243,7 @@ namespace xaimatzu
                 {
                     if (arg.Equals("-capture"))
                     {
-                        buttonTakeScreenshot_Click(null, null);
+                        _imageControls.TakeScreenshot();
                     }
 
                     if (arg.Equals("-exit"))
@@ -261,8 +272,10 @@ namespace xaimatzu
 
         private void CheckTimedScreenshot()
         {
-            if (_imageControls.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(DateTime.Now.ToString("yyyy-MM-dd")) &&
-                _rgxTime.IsMatch(_imageControls.textBoxTime.Text) && _imageControls.textBoxTime.Text.Equals(DateTime.Now.ToString("HH:mm:ss")))
+            DateTime dt = DateTime.Now;
+
+            if (_imageControls.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(dt.ToString("yyyy-MM-dd")) &&
+                _rgxTime.IsMatch(_imageControls.textBoxTime.Text) && _imageControls.textBoxTime.Text.Equals(dt.ToString("HH:mm:ss")))
             {
                 buttonTakeScreenshot_Click(null, null);
             }
@@ -275,14 +288,24 @@ namespace xaimatzu
             _about.Show();
         }
 
-        private void buttonHowToUse_Click(object sender, RoutedEventArgs e)
+        private void buttonHelp_Click(object sender, RoutedEventArgs e)
         {
-            _howToUse.Show();
+            _help.Show();
         }
 
         private void buttonImageControls_Click(object sender, RoutedEventArgs e)
         {
             _imageControls.Show();
+        }
+
+        private void buttonActiveWindow_Click(object sender, RoutedEventArgs e)
+        {
+            _activeWindow.Show();
+        }
+
+        private void buttonApplicationFocus_Click(object sender, RoutedEventArgs e)
+        {
+            _applicationFocus.Show();
         }
 
         private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
@@ -319,58 +342,7 @@ namespace xaimatzu
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
-            Bitmap bitmap = null;
-            BitmapSource bitmapSource = null;
-
-            try
-            {
-                bool clipboard = (bool)_imageControls.checkBoxClipboard.IsChecked;
-
-                int x = 0;
-                int y = 0;
-                int width = 0;
-                int height = 0;
-
-                if (_imageControls.ActiveWindow)
-                {
-                    if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text))
-                    {
-                        bitmapSource = _screenCapture.TakeScreenshot(0, 0, 0, 0, captureActiveWindow: true, out bitmap);
-                    }
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(_imageControls.textBoxFile.Text) &&
-                        int.TryParse(_imageControls.textBoxX.Text, out x) &&
-                        int.TryParse(_imageControls.textBoxY.Text, out y) &&
-                        int.TryParse(_imageControls.textBoxWidth.Text, out width) &&
-                        int.TryParse(_imageControls.textBoxHeight.Text, out height))
-                    {
-                        bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, captureActiveWindow: false, out bitmap);
-                    }
-                }
-
-                if (clipboard)
-                {
-                    if (bitmapSource != null)
-                    {
-                        _screenCapture.SendToClipboard(bitmapSource);
-                    }
-                }
-
-                _screenCapture.SaveScreenshot(bitmap, _imageControls.textBoxFile.Text, _imageControls.comboBoxFormat.SelectedItem.ToString().ToLower());
-            }
-            catch (Exception ex)
-            {
-                Error(ex);
-            }
-            finally
-            {
-                if (bitmap != null)
-                {
-                    bitmap.Dispose();
-                }
-            }
+            _imageControls.TakeScreenshot();
         }
 
         private void SetActiveWindowTitle(string activeWindowTitle)
@@ -380,23 +352,6 @@ namespace xaimatzu
             _imageControls.ActiveWindow = true;
 
             _screenCapture.ActiveWindowTitle = activeWindowTitle;
-        }
-
-        private void SetApplicationFocus(string applicationFocus)
-        {
-            applicationFocus = applicationFocus.Trim();
-
-            if (_applicationFocusDelayBefore > 0)
-            {
-                System.Threading.Thread.Sleep(_applicationFocusDelayBefore);
-            }
-
-            _screenCapture.SetApplicationFocus(applicationFocus);
-
-            if (_applicationFocusDelayAfter > 0)
-            {
-                System.Threading.Thread.Sleep(_applicationFocusDelayAfter);
-            }
         }
 
         private void buttonExit_Click(object sender, RoutedEventArgs e)

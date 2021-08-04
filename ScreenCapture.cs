@@ -32,6 +32,9 @@ using System.Windows.Media.Imaging;
 
 namespace xaimatzu
 {
+    /// <summary>
+    /// A class for handling screen capture functionality. Imported from the Auto Screen Capture project.
+    /// </summary>
     public class ScreenCapture
     {
         private const int MAX_CHARS = 48000;
@@ -50,7 +53,7 @@ namespace xaimatzu
 
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DeleteObject([In] IntPtr hObject);
+        private static extern bool DeleteObject([In] IntPtr hObject);
 
         internal enum ShowWindowCommands : int
         {
@@ -87,10 +90,22 @@ namespace xaimatzu
         [DllImport("user32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
+        /// <summary>
+        /// The title of the active window.
+        /// </summary>
         public string ActiveWindowTitle { get; set; }
 
-        private string ParseMacroTags(string macro, DateTime dt, string format, string activeWindowTitle)
+        /// <summary>
+        /// Parses the provided macro for macro tags and returns the resulting value based on those macro tags.
+        /// </summary>
+        /// <param name="macro">The macro to provide that contains macro tags (such as %date% and %time%).</param>
+        /// <param name="format">The image format represented as a string (such as "jpeg").</param>
+        /// <param name="activeWindowTitle">The title of the active window.</param>
+        /// <returns>The parsed macro (so %date% in the macro will return the current date in the format yyyy-MM-dd).</returns>
+        private string ParseMacroTags(string macro, string format, string activeWindowTitle)
         {
+            DateTime dt = DateTime.Now;
+
             // Strip invalid Windows characters in the title.
             activeWindowTitle = activeWindowTitle.Replace(@"\", string.Empty);
             activeWindowTitle = activeWindowTitle.Replace("/", string.Empty);
@@ -117,6 +132,46 @@ namespace xaimatzu
             return macro;
         }
 
+        /// <summary>
+        /// Gets the bitmap source based on X, Y, Width, Height, and a bitmap image.
+        /// </summary>
+        /// <param name="x">The X coordinate of the image location.</param>
+        /// <param name="y">The Y coordinate of the image location.</param>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <param name="bitmap">The image to use for creating the bitmap source.</param>
+        /// <returns>The bitmap source used for the clipboard and screenshot preview.</returns>
+        private BitmapSource GetBitmapSource(int x, int y, int width, int height, Bitmap bitmap)
+        {
+            BitmapSource bitmapSource = null;
+
+            using (var bmpGraphics = Graphics.FromImage(bitmap))
+            {
+                bmpGraphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
+
+                var handle = bitmap.GetHbitmap();
+
+                try
+                {
+                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+                        handle,
+                        IntPtr.Zero,
+                        Int32Rect.Empty,
+                        BitmapSizeOptions.FromEmptyOptions());
+                }
+                finally
+                {
+                    DeleteObject(handle);
+                }
+            }
+
+            return bitmapSource;
+        }
+
+        /// <summary>
+        /// Gets the title of the active window.
+        /// </summary>
+        /// <returns>The title of the active window.</returns>
         public string GetActiveWindowTitle()
         {
             try
@@ -142,6 +197,10 @@ namespace xaimatzu
             }
         }
 
+        /// <summary>
+        /// Gets the bitmap image of the active window.
+        /// </summary>
+        /// <returns>The bitmap image of the active window.</returns>
         public Bitmap GetActiveWindowBitmap()
         {
             try
@@ -171,11 +230,20 @@ namespace xaimatzu
             }
         }
 
-        public void SetApplicationFocus(string applicationFocus)
+        /// <summary>
+        /// Forces the focus on the foreground window of the given application process name.
+        /// </summary>
+        /// <param name="processName">The name of the process to focus on.</param>
+        public void ForceFocusOnProcess(string processName)
         {
-            if (string.IsNullOrEmpty(applicationFocus)) return;
+            if (string.IsNullOrEmpty(processName))
+            {
+                return;
+            }
 
-            Process[] process = Process.GetProcessesByName(applicationFocus);
+            processName = processName.Trim();
+
+            Process[] process = Process.GetProcessesByName(processName);
 
             foreach (var item in process)
             {
@@ -193,66 +261,69 @@ namespace xaimatzu
             }
         }
 
+        /// <summary>
+        /// Takes a screenshot based on the given parameters for X, Y, Width, and Height. Also determines if we should capture
+        /// the active window. The captured image is stored in the proided Bitmap object and a BitmapSource is returned.
+        /// </summary>
+        /// <param name="x">The X coordinate of the image location.</param>
+        /// <param name="y">The Y coordinate of the image location.</param>
+        /// <param name="width">The width of the image.</param>
+        /// <param name="height">The height of the image.</param>
+        /// <param name="captureActiveWindow">Determines if we capture the active window.</param>
+        /// <param name="bitmap">The bitmap where the image will be stored after screen capture.</param>
+        /// <returns>The bitmap source to be used for the clipboard and screenshot preview.</returns>
         public BitmapSource TakeScreenshot(int x, int y, int width, int height, bool captureActiveWindow, out Bitmap bitmap)
         {
-            if (!string.IsNullOrEmpty(ActiveWindowTitle) && !GetActiveWindowTitle().ToLower().Contains(ActiveWindowTitle.ToLower()))
+            try
+            {
+                if (!string.IsNullOrEmpty(ActiveWindowTitle) && !GetActiveWindowTitle().ToLower().Contains(ActiveWindowTitle.ToLower()))
+                {
+                    bitmap = null;
+
+                    return null;
+                }
+
+                if (captureActiveWindow)
+                {
+                    bitmap = GetActiveWindowBitmap();
+                }
+                else
+                {
+                    bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+                }
+
+                return GetBitmapSource(x, y, width, height, bitmap);
+            }
+            catch
             {
                 bitmap = null;
 
                 return null;
             }
-
-            if (captureActiveWindow)
-            {
-                bitmap = GetActiveWindowBitmap();
-            }
-            else
-            {
-                bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            }
-
-            return GetBitmapSource(x, y, width, height, bitmap);
         }
 
-        private BitmapSource GetBitmapSource(int x, int y, int width, int height, Bitmap bitmap)
-        {
-            BitmapSource bitmapSource = null;
-
-            using (var bmpGraphics = Graphics.FromImage(bitmap))
-            {
-                bmpGraphics.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
-
-                var handle = bitmap.GetHbitmap();
-
-                try
-                {
-                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                        handle,
-                        IntPtr.Zero,
-                        Int32Rect.Empty,
-                        BitmapSizeOptions.FromEmptyOptions());
-                }
-                finally
-                {
-                    DeleteObject(handle);
-                }
-            }
-
-            return bitmapSource;
-        }
-
+        /// <summary>
+        /// Gives the provided image to the clipboard.
+        /// </summary>
+        /// <param name="bitmapSource">The bitmap source containing the image for the clipboard.</param>
         public void SendToClipboard(BitmapSource bitmapSource)
         {
             Clipboard.SetImage(bitmapSource);
         }
 
+        /// <summary>
+        /// Saves a screenshot of the provided bitmap to a file using the provided path.
+        /// </summary>
+        /// <param name="bitmap">The image to save.</param>
+        /// <param name="path">The filepath to save the image to.</param>
+        /// <param name="format">The image format.</param>
         public void SaveScreenshot(Bitmap bitmap, string path, string format)
         {
             try
             {
                 if (bitmap != null)
                 {
-                    path = ParseMacroTags(path, DateTime.Now, format, GetActiveWindowTitle());
+                    path = ParseMacroTags(path, format, GetActiveWindowTitle());
 
                     if (!Directory.Exists(Path.GetDirectoryName(path)))
                     {

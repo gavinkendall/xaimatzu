@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ScreenshotPreview.xaml.cs" company="Gavin Kendall">
+// <copyright file="ActiveWindow.xaml.cs" company="Gavin Kendall">
 //     Copyright (c) 2021 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
-// <summary>A window that shows a preview of the screenshot.</summary>
+// <summary></summary>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@ using System.Windows;
 namespace xaimatzu
 {
     /// <summary>
-    /// Interaction logic for ScreenshotPreview.xaml
+    /// Interaction logic for ActiveWindow.xaml
     /// </summary>
-    public partial class ScreenshotPreview : Window
+    public partial class ActiveWindow : Window
     {
-        public ScreenshotPreview()
+        public ActiveWindow()
         {
             InitializeComponent();
         }

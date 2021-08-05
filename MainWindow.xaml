@@ -5,20 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu" Height="310" Width="222.062" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Hidden">
+        Title="Xaimatzu (2.2.0.0)" Height="195" Width="222.062" Background="#FFFFFF" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Hidden">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="buttonAbout" Content="About" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonAbout_Click"/>
-        <Button x:Name="buttonHelp" Content="Help" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonHelp_Click"/>
-        <Button x:Name="buttonImageControls" Content="Image Controls" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonImageControls_Click"/>
-        <Button x:Name="buttonActiveWindow" Content="Active Window" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonActiveWindow_Click"/>
-        <Button x:Name="buttonApplicationFocus" Content="Application Focus" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonApplicationFocus_Click"/>
-        <Button x:Name="buttonRegionSelect" Content="Region Select" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonRegionSelect_Click"/>
-        <Button x:Name="buttonScreenshotPreview" Content="Screenshot Preview" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonScreenshotPreview_Click"/>
-        <Button x:Name="buttonTakeScreenshot" Content="Take Screenshot" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonTakeScreenshot_Click"/>
-        <Button x:Name="buttonExit" Content="Exit" HorizontalAlignment="Left" Margin="10,250,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonExit_Click"/>
-    </Grid>
+        <Button x:Name="buttonHelp" Content="Help" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonHelp_Click"/>
+        <Button x:Name="buttonSettings" Content="Settings" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonSettings_Click"/>
+        <Button x:Name="buttonRegionSelect" Content="Region Select" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonRegionSelect_Click"/>
+        <Button x:Name="buttonScreenshotPreview" Content="Screenshot Preview" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonScreenshotPreview_Click"/>
+        <Button x:Name="buttonTakeScreenshot" Content="Take Screenshot" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonTakeScreenshot_Click"/>
+     </Grid>
 </Window>

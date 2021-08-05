@@ -18,6 +18,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
+using System.IO;
+using System.Text;
 using System.Windows;
 
 namespace xaimatzu
@@ -32,11 +34,42 @@ namespace xaimatzu
             InitializeComponent();
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            listBoxHelp.Items.Add("About");
+            listBoxHelp.Items.Add("Welcome");
+
+            listBoxHelp.SelectedIndex = 0;
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
 
             Hide();
+        }
+
+        private void listBoxHelp_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            richTextBoxHelpText.Document.Blocks.Clear();
+
+            MemoryStream stream;
+
+            switch (listBoxHelp.SelectedIndex)
+            {
+                case 0:
+                    stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_0_About));
+                    richTextBoxHelpText.Selection.Load(stream, DataFormats.Rtf);
+                    break;
+
+                case 1:
+                    stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_1_Welcome));
+                    richTextBoxHelpText.Selection.Load(stream, DataFormats.Rtf);
+                    break;
+            }
+
+            richTextBoxHelpText.CaretPosition = richTextBoxHelpText.CaretPosition.DocumentStart;
+            richTextBoxHelpText.ScrollToHome();
         }
     }
 }

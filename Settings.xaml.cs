@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ImageControls.xaml.cs" company="Gavin Kendall">
+// <copyright file="Settings.xaml.cs" company="Gavin Kendall">
 //     Copyright (c) 2021 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
-// <summary>The window for image controls (including the filepath for where the screenshot is going to be written to on disk).</summary>
+// <summary></summary>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,23 +28,26 @@ using System.Windows.Media.Imaging;
 namespace xaimatzu
 {
     /// <summary>
-    /// Interaction logic for ImageControls.xaml
+    /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class ImageControls : Window
+    public partial class Settings : Window
     {
         private ScreenCapture _screenCapture;
 
         public bool ActiveWindow;
         public ScreenshotPreview screenshotPreview;
-        public ApplicationFocus applicationFocus;
 
-        public ImageControls(ScreenCapture screenCapture, ScreenshotPreview screenshotPreview, ApplicationFocus applicationFocus)
+        public Settings(ScreenCapture screenCapture, ScreenshotPreview screenshotPreview)
         {
             InitializeComponent();
 
             _screenCapture = screenCapture;
             this.screenshotPreview = screenshotPreview;
-            this.applicationFocus = applicationFocus;
+
+            textBoxDelayBefore.Text = "0";
+            textBoxDelayAfter.Text = "0";
+
+            buttonRefreshProcessList_Click(null, null);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -86,6 +90,50 @@ namespace xaimatzu
             TakeScreenshot();
         }
 
+        private void buttonRefreshProcessList_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshProcessList();
+        }
+
+        private void buttonTestFocus_Click(object sender, RoutedEventArgs e)
+        {
+            if (listBoxProcessName.SelectedItem != null &&
+                !string.IsNullOrEmpty(listBoxProcessName.SelectedItem.ToString()) &&
+                int.TryParse(textBoxDelayBefore.Text, out int delayBefore) &&
+                int.TryParse(textBoxDelayAfter.Text, out int delayAfter))
+            {
+                DoApplicationFocus(listBoxProcessName.SelectedItem.ToString(), delayBefore, delayAfter);
+            }
+            else
+            {
+                MessageBox.Show("No application was selected from the process list.", "No Application Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void checkBoxApplicationFocus_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)checkBoxApplicationFocus.IsChecked)
+            {
+                listBoxProcessName.IsEnabled = true;
+                labelDelayBefore.IsEnabled = true;
+                labelDelayAfter.IsEnabled = true;
+                textBoxDelayBefore.IsEnabled = true;
+                textBoxDelayAfter.IsEnabled = true;
+                buttonRefreshProcessList.IsEnabled = true;
+                buttonTestFocus.IsEnabled = true;
+            }
+            else
+            {
+                listBoxProcessName.IsEnabled = false;
+                labelDelayBefore.IsEnabled = false;
+                labelDelayAfter.IsEnabled = false;
+                textBoxDelayBefore.IsEnabled = false;
+                textBoxDelayAfter.IsEnabled = false;
+                buttonRefreshProcessList.IsEnabled = false;
+                buttonTestFocus.IsEnabled = false;
+            }
+        }
+
         /// <summary>
         /// Takes a screenshot of either the active window or a region of the screen (that could also be sent to the clipboard and/or saved to a file).
         /// </summary>
@@ -96,7 +144,7 @@ namespace xaimatzu
 
             try
             {
-                applicationFocus.DoApplicationFocus();
+                DoApplicationFocus();
 
                 bool clipboard = (bool)checkBoxClipboard.IsChecked;
 
@@ -139,7 +187,7 @@ namespace xaimatzu
             }
             catch (Exception)
             {
-                
+
             }
             finally
             {
@@ -173,6 +221,84 @@ namespace xaimatzu
                     screenshotPreview.Title = "Xaimatzu - Screenshot Preview (" + bitmapSource.Width + "x" + bitmapSource.Height + ")";
                     screenshotPreview.imageScreenshotPreview.Source = bitmapSource;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the process list.
+        /// </summary>
+        public void RefreshProcessList()
+        {
+            listBoxProcessName.Items.Clear();
+
+            foreach (Process process in Process.GetProcesses())
+            {
+                if (!listBoxProcessName.Items.Contains(process.ProcessName))
+                {
+                    listBoxProcessName.Items.Add(process.ProcessName);
+                }
+            }
+
+            listBoxProcessName.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription(string.Empty, System.ComponentModel.ListSortDirection.Ascending));
+        }
+
+        /// <summary>
+        /// Does application focus based on the values of the controls in the Application Focus window.
+        /// This method should be called from a class outside of this class.
+        /// </summary>
+        public void DoApplicationFocus()
+        {
+            if (!(bool)checkBoxApplicationFocus.IsChecked)
+            {
+                return;
+            }
+
+            if (listBoxProcessName.SelectedItem != null &&
+                !string.IsNullOrEmpty(listBoxProcessName.SelectedItem.ToString()) &&
+                int.TryParse(textBoxDelayBefore.Text, out int delayBefore) &&
+                int.TryParse(textBoxDelayAfter.Text, out int delayAfter))
+            {
+                DoApplicationFocus(listBoxProcessName.SelectedItem.ToString(), delayBefore, delayAfter);
+            }
+        }
+
+        /// <summary>
+        /// Does application focus. This method should be called when parsing command line arguments or called by internal methods within this class.
+        /// </summary>
+        /// <param name="processName">The name of the process.</param>
+        /// <param name="delayBefore">The number of milliseconds before doing application focus.</param>
+        /// <param name="delayAfter">The number of milliseconds after doing application focus.</param>
+        public void DoApplicationFocus(string processName, int delayBefore, int delayAfter)
+        {
+            if (string.IsNullOrEmpty(processName))
+            {
+                return;
+            }
+
+            // If we've reached this point and the checkbox hasn't been set then set the checkbox.
+            // This is likely to be used by the command line.
+            if (!(bool)checkBoxApplicationFocus.IsChecked)
+            {
+                checkBoxApplicationFocus.IsChecked = true;
+
+                listBoxProcessName.SelectedItem = processName;
+
+                textBoxDelayBefore.Text = delayBefore.ToString();
+                textBoxDelayAfter.Text = delayAfter.ToString();
+            }
+
+            processName = processName.Trim();
+
+            if (delayBefore > 0)
+            {
+                System.Threading.Thread.Sleep(delayBefore);
+            }
+
+            _screenCapture.ForceFocusOnProcess(processName);
+
+            if (delayAfter > 0)
+            {
+                System.Threading.Thread.Sleep(delayAfter);
             }
         }
     }

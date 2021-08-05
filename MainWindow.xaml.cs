@@ -34,11 +34,8 @@ namespace xaimatzu
     {
         private System.Timers.Timer _timer;
         private Regex _rgxTime;
-        private About _about;
         private Help _help;
-        private ImageControls _imageControls;
-        private ActiveWindow _activeWindow;
-        private ApplicationFocus _applicationFocus;
+        private Settings _settings;
         private ScreenCapture _screenCapture;
         private ScreenshotPreview _screenshotPreview;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
@@ -61,31 +58,28 @@ namespace xaimatzu
             _timer.Elapsed += _timer_Elapsed;
 
             // The various forms to construct.
-            _about = new About();
             _help = new Help();
             _screenCapture = new ScreenCapture();
             _screenshotPreview = new ScreenshotPreview();
-            _applicationFocus = new ApplicationFocus(_screenCapture);
-            _imageControls = new ImageControls(_screenCapture, _screenshotPreview, _applicationFocus);
-            _activeWindow = new ActiveWindow();
+            _settings = new Settings(_screenCapture, _screenshotPreview);
 
             // The regular expression to use for checking against the provided time in the Time text field.
             // (format must be HH:mm:ss)
             _rgxTime = new Regex(@"^\d{2}:\d{2}:\d{2}$");
 
-            _imageControls.comboBoxFormat.Items.Add("BMP");
-            _imageControls.comboBoxFormat.Items.Add("EMF");
-            _imageControls.comboBoxFormat.Items.Add("GIF");
-            _imageControls.comboBoxFormat.Items.Add("JPEG");
-            _imageControls.comboBoxFormat.Items.Add("PNG");
-            _imageControls.comboBoxFormat.Items.Add("TIFF");
-            _imageControls.comboBoxFormat.Items.Add("WMF");
+            _settings.comboBoxFormat.Items.Add("BMP");
+            _settings.comboBoxFormat.Items.Add("EMF");
+            _settings.comboBoxFormat.Items.Add("GIF");
+            _settings.comboBoxFormat.Items.Add("JPEG");
+            _settings.comboBoxFormat.Items.Add("PNG");
+            _settings.comboBoxFormat.Items.Add("TIFF");
+            _settings.comboBoxFormat.Items.Add("WMF");
 
-            _imageControls.comboBoxFormat.SelectedIndex = 3; // JPEG is the default image format
+            _settings.comboBoxFormat.SelectedIndex = 3; // JPEG is the default image format
 
-            _imageControls.Date.SelectedDate = DateTime.Now.Date;
+            _settings.Date.SelectedDate = DateTime.Now.Date;
 
-            _imageControls.textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
+            _settings.textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
 
             _timer.Start();
 
@@ -139,22 +133,22 @@ namespace xaimatzu
 
                     if (rgxCommandLineOptionX.IsMatch(arg))
                     {
-                        _imageControls.textBoxX.Text = rgxCommandLineOptionX.Match(arg).Groups["X"].Value;
+                        _settings.textBoxX.Text = rgxCommandLineOptionX.Match(arg).Groups["X"].Value;
                     }
 
                     if (rgxCommandLineOptionY.IsMatch(arg))
                     {
-                        _imageControls.textBoxY.Text = rgxCommandLineOptionY.Match(arg).Groups["Y"].Value;
+                        _settings.textBoxY.Text = rgxCommandLineOptionY.Match(arg).Groups["Y"].Value;
                     }
 
                     if (rgxCommandLineOptionWidth.IsMatch(arg))
                     {
-                        _imageControls.textBoxWidth.Text = rgxCommandLineOptionWidth.Match(arg).Groups["Width"].Value;
+                        _settings.textBoxWidth.Text = rgxCommandLineOptionWidth.Match(arg).Groups["Width"].Value;
                     }
 
                     if (rgxCommandLineOptionHeight.IsMatch(arg))
                     {
-                        _imageControls.textBoxHeight.Text = rgxCommandLineOptionHeight.Match(arg).Groups["Height"].Value;
+                        _settings.textBoxHeight.Text = rgxCommandLineOptionHeight.Match(arg).Groups["Height"].Value;
                     }
 
                     if (rgxCommandLineOptionDate.IsMatch(arg))
@@ -165,38 +159,38 @@ namespace xaimatzu
                         {
                             DateTime dt = new DateTime(year, month, day);
 
-                            _imageControls.Date.SelectedDate = dt;
+                            _settings.Date.SelectedDate = dt;
                         }
                     }
 
                     if (rgxCommandLineOptionTime.IsMatch(arg))
                     {
-                        _imageControls.textBoxTime.Text = rgxCommandLineOptionTime.Match(arg).Groups["Time"].Value;
+                        _settings.textBoxTime.Text = rgxCommandLineOptionTime.Match(arg).Groups["Time"].Value;
                     }
 
                     if (rgxCommandLineOptionFormat.IsMatch(arg))
                     {
-                        _imageControls.comboBoxFormat.SelectedItem = rgxCommandLineOptionFormat.Match(arg).Groups["Format"].Value.ToUpper();
+                        _settings.comboBoxFormat.SelectedItem = rgxCommandLineOptionFormat.Match(arg).Groups["Format"].Value.ToUpper();
                     }
 
                     if (rgxCommandLineOptionFile.IsMatch(arg))
                     {
-                        _imageControls.textBoxFile.Text = rgxCommandLineOptionFile.Match(arg).Groups["File"].Value;
+                        _settings.textBoxFile.Text = rgxCommandLineOptionFile.Match(arg).Groups["File"].Value;
                     }
 
                     if (rgxCommandLineOptionSave.IsMatch(arg))
                     {
-                        _imageControls.checkBoxSave.IsChecked = true;
+                        _settings.checkBoxSave.IsChecked = true;
                     }
 
                     if (rgxCommandLineOptionClipboard.IsMatch(arg))
                     {
-                        _imageControls.checkBoxClipboard.IsChecked = true;
+                        _settings.checkBoxClipboard.IsChecked = true;
                     }
 
                     if (rgxCommandLineOptionActiveWindow.IsMatch(arg))
                     {
-                        _imageControls.ActiveWindow = true;
+                        _settings.ActiveWindow = true;
                     }
 
                     if (rgxCommandLineOptionActiveWindowTitle.IsMatch(arg))
@@ -232,8 +226,8 @@ namespace xaimatzu
 
                         if (applicationFocus.Length > 0)
                         {
-                            _applicationFocus.RefreshProcessList();
-                            _applicationFocus.DoApplicationFocus(applicationFocus, _applicationFocusDelayBefore, _applicationFocusDelayAfter);
+                            _settings.RefreshProcessList();
+                            _settings.DoApplicationFocus(applicationFocus, _applicationFocusDelayBefore, _applicationFocusDelayAfter);
                         }
                     }
                 }
@@ -243,7 +237,7 @@ namespace xaimatzu
                 {
                     if (arg.Equals("-capture"))
                     {
-                        _imageControls.TakeScreenshot();
+                        _settings.TakeScreenshot();
                     }
 
                     if (arg.Equals("-exit"))
@@ -274,18 +268,13 @@ namespace xaimatzu
         {
             DateTime dt = DateTime.Now;
 
-            if (_imageControls.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(dt.ToString("yyyy-MM-dd")) &&
-                _rgxTime.IsMatch(_imageControls.textBoxTime.Text) && _imageControls.textBoxTime.Text.Equals(dt.ToString("HH:mm:ss")))
+            if (_settings.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(dt.ToString("yyyy-MM-dd")) &&
+                _rgxTime.IsMatch(_settings.textBoxTime.Text) && _settings.textBoxTime.Text.Equals(dt.ToString("HH:mm:ss")))
             {
                 buttonTakeScreenshot_Click(null, null);
             }
 
-            _imageControls.UpdatePreview();
-        }
-
-        private void buttonAbout_Click(object sender, RoutedEventArgs e)
-        {
-            _about.Show();
+            _settings.UpdatePreview();
         }
 
         private void buttonHelp_Click(object sender, RoutedEventArgs e)
@@ -295,22 +284,17 @@ namespace xaimatzu
 
         private void buttonImageControls_Click(object sender, RoutedEventArgs e)
         {
-            _imageControls.Show();
+            _settings.Show();
         }
 
-        private void buttonActiveWindow_Click(object sender, RoutedEventArgs e)
+        private void buttonSettings_Click(object sender, RoutedEventArgs e)
         {
-            _activeWindow.Show();
-        }
-
-        private void buttonApplicationFocus_Click(object sender, RoutedEventArgs e)
-        {
-            _applicationFocus.Show();
+            _settings.Show();
         }
 
         private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
         {
-            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(_imageControls.checkBoxClipboard.IsChecked);
+            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(_settings.checkBoxClipboard.IsChecked);
             _formRegionSelectWithMouse.MouseSelectionCompleted += formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted;
             _formRegionSelectWithMouse.LoadCanvas();
         }
@@ -322,12 +306,12 @@ namespace xaimatzu
             int width = _formRegionSelectWithMouse.outputWidth - 2;
             int height = _formRegionSelectWithMouse.outputHeight - 2;
 
-            _imageControls.textBoxX.Text = x.ToString();
-            _imageControls.textBoxY.Text = y.ToString();
-            _imageControls.textBoxWidth.Text = width.ToString();
-            _imageControls.textBoxHeight.Text = height.ToString();
+            _settings.textBoxX.Text = x.ToString();
+            _settings.textBoxY.Text = y.ToString();
+            _settings.textBoxWidth.Text = width.ToString();
+            _settings.textBoxHeight.Text = height.ToString();
 
-            if ((bool)_imageControls.checkBoxSave.IsChecked)
+            if ((bool)_settings.checkBoxSave.IsChecked)
             {
                 buttonTakeScreenshot_Click(sender, null);
             }
@@ -337,19 +321,19 @@ namespace xaimatzu
 
         private void buttonScreenshotPreview_Click(object sender, RoutedEventArgs e)
         {
-            _imageControls.screenshotPreview.Show();
+            _settings.screenshotPreview.Show();
         }
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
-            _imageControls.TakeScreenshot();
+            _settings.TakeScreenshot();
         }
 
         private void SetActiveWindowTitle(string activeWindowTitle)
         {
             activeWindowTitle = activeWindowTitle.Trim();
 
-            _imageControls.ActiveWindow = true;
+            _settings.ActiveWindow = true;
 
             _screenCapture.ActiveWindowTitle = activeWindowTitle;
         }

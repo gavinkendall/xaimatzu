@@ -5,84 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu - Help" Height="312.683" Width="477.627" Icon="xaimatzu.ico" Closing="Window_Closing" Topmost="True" IsTabStop="False" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Visible">
+        Title="Xaimatzu - Help" Height="393.683" Width="687.627" Icon="xaimatzu.ico" Closing="Window_Closing" Topmost="True" IsTabStop="False" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" Loaded="Window_Loaded">
     <Grid>
-        <ScrollViewer>
-            <StackPanel x:Name="RightPanel"
-                    Margin="5,0"
-                    ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                    ScrollViewer.VerticalScrollBarVisibility="Visible">
-                <TextBlock Margin="10" xml:space="preserve" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
-Xaimatzu is a screen capture utility developed to take fast and timely screenshots based on the selected area of a screen and a specified filepath. A screenshot can be taken on a chosen date at a particular time or immediately taken with the Take Screenshot button or when a mouse-driven selection of an area has completed using Region Select. The captured image can also be sent to the clipboard whenever the X, Y, Width, and Height values change and saved to the file immediately after the selection of an area has completed.
-
-Click on the "Image Controls" button to show the Image Controls window and select a screen from the "Screen" drop-down list. This will apply the values for X, Y, Width, and Height. You can adjust these values to best represent the area you want to capture when taking a screenshot or use the "Region Select" button for a mouse-driven selection. Click on the "Screenshot Preview" button to see a preview of the area to be captured when a screenshot is taken with the "Take Screenshot" button.
-
-In the Image Controls window select an image format from the "Format" drop-down list. There are seven available; BMP, EMF, GIF, JPEG, PNG, TIFF, and WMF. The default image format is JPEG.
-
-The Image Controls window also has a Date control and a Time field for choosing when a screenshot should be taken. The Date control, by default, will use today's date. You can change it to a later date if you wish. The value for the Time field needs to follow the 24-hour format HH:MM:SS for the hour, minute, and second when a screenshot should be taken. The Date control and the Time field are constantly monitored for changes so simply choose a date and type in a time (using the 24-hour format) in the Time field and wait for the screenshot to be taken at that time. There is no other interaction required.
-
-Below the Date control and Time field in the Image Controls window is the "File" field specifying the filepath of the file to use for saving the screenshot. The %format% macro tag represents the chosen image format. For example, if the image format is set to PNG then the value of %format% will be replaced with "png". You can use the %format% macro tag anywhere in the filepath.
-
-The "Send captured image to clipboard" option, when enabled, will give the system's clipboard a copy of the captured image whenever the X, Y, Width, and Height values change. This is useful when you want to select an area of the screen with the Region Select button and have the captured image be immediately available in the clipboard when the mouse-driven selection has completed.
-
-The "Save screenshot to file" option, when enabled, will save the captured image to the specified file (using the filepath pattern in the "File" field) when Region Select is used and the mouse-driven selection has completed. The operation performed is exactly as if you had clicked on the "Take Screenshot" button. This is a fast way to take a screenshot of an area of the screen and have it immediately saved to disk.
-
-When you have everything ready (the X, Y, Width, and Height values are set and the filepath in the "File" field is specified) and you're happy with what will be captured based on what you see in the Screenshot Preview window, click on the "Take Screenshot" button to take a screenshot and save it to the file.
-
-To quit or exit the application click on the "Exit" button or close the small "Xaimatzu" window. A confirmation dialog will appear to confirm if you want to exit Xaimatzu.
-
-You can use these macro tags in your filepath:
-%date%
-%time%
-%year%
-%month%
-%day%
-%hour%
-%minute%
-%second%
-%millisecond%
-%format%
-%title%
-
-You can provide command line options when running xaimatzu.exe from a command line.
-
-Specify X, Y, Width, Height, image format, and filepath:
-xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot.%format%"
-
-Wait for a screenshot to be taken on a specific date at a particular time and send the screenshot to the clipboard:
-xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00 -clipboard
-
-Hide while waiting for the date and time to take a screenshot then save the screenshot to the file:
-xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot.%format%" -date=2021-03-31 -time=16:00:00 -hide -save
-
-Take a screenshot, save it to the file, and then exit:
-xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot.%format%" -capture -save -exit
-
-Hide while a screenshot is taken and the captured image is sent to the clipboard:
-xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -capture -hide -clipboard
-
-Hide while a screenshot is taken using %date% and %time% macro tags in the filename:
-xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -capture -hide -save
-
-Take a screenshot of the active window on 31 March 2021 at 4pm:
-xaimatzu.exe -activeWindow -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -date=2021-03-31 -time=16:00:00 -hide
-
-Take a screenshot of Notepad and save to a file with the title of the active window from the application in the filepath then exit:
-xaimatzu.exe -activeWindow -format=jpeg -file="%title%.%format%" -save -hide -capture -applicationFocus="notepad" -exit
-
-Wait 1000 milliseconds before focusing on Notepad, focus on Notepad, take a screenshot of Notepad, and save to a file with the title of the active window from the application in the filepath then exit:
-xaimatzu.exe -activeWindow -format=jpeg -file="%title%.%format%" -save -hide -capture -applicationFocus="notepad" -applicationFocusDelayBefore=1000 -exit
-
-Take a screenshot of the active PowerShell window if the active window title contains the text "Administrator" then exit:
-xaimatzu.exe -activeWindow -format=jpeg -file="%date%_%time%_%title%.%format%" -save -hide -capture -applicationFocus="powershell" -aciveWindowTitle="Administrator" -exit
-
-Kill all running instances of Xaimatzu while starting a new instance of Xaimatzu:
-xaimatzu.exe -kill
-
-Kill all running instances of Xaimatzu and exit the new instance of Xaimatzu:
-xaimatzu.exe -kill -exit
-                </TextBlock>
-            </StackPanel>
-        </ScrollViewer>
+        <ListBox x:Name="listBoxHelp" BorderThickness="2" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" Width="196" SelectionChanged="listBoxHelp_SelectionChanged"/>
+        <RichTextBox x:Name="richTextBoxHelpText" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible" Margin="201,1,10,1" HorizontalAlignment="Right" AcceptsReturn="False" IsUndoEnabled="False" IsTabStop="False" AllowDrop="False" IsReadOnly="True"/>
     </Grid>
 </Window>

@@ -65,44 +65,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ActiveWindow.xaml.cs">
-      <DependentUpon>ActiveWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationFocus.xaml.cs">
-      <DependentUpon>ApplicationFocus.xaml</DependentUpon>
+    <Compile Include="Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImageControls.xaml.cs">
-      <DependentUpon>ImageControls.xaml</DependentUpon>
     </Compile>
     <Compile Include="ScreenCapture.cs" />
     <Compile Include="ScreenshotPreview.xaml.cs">
       <DependentUpon>ScreenshotPreview.xaml</DependentUpon>
     </Compile>
-    <Page Include="ActiveWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ApplicationFocus.xaml">
+    <Page Include="Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Help.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ImageControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -146,6 +125,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="help\help-0-About.rtf" />
+    <None Include="help\help-1-Welcome.rtf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

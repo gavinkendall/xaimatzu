@@ -96,43 +96,6 @@ namespace xaimatzu
         public string ActiveWindowTitle { get; set; }
 
         /// <summary>
-        /// Parses the provided macro for macro tags and returns the resulting value based on those macro tags.
-        /// </summary>
-        /// <param name="macro">The macro to provide that contains macro tags (such as %date% and %time%).</param>
-        /// <param name="format">The image format represented as a string (such as "jpeg").</param>
-        /// <param name="activeWindowTitle">The title of the active window.</param>
-        /// <returns>The parsed macro (so %date% in the macro will return the current date in the format yyyy-MM-dd).</returns>
-        private string ParseMacroTags(string macro, string format, string activeWindowTitle)
-        {
-            DateTime dt = DateTime.Now;
-
-            // Strip invalid Windows characters in the title.
-            activeWindowTitle = activeWindowTitle.Replace(@"\", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace("/", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace(":", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace("*", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace("?", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace("\"", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace("<", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace(">", string.Empty);
-            activeWindowTitle = activeWindowTitle.Replace("|", string.Empty);
-
-            macro = macro.Replace("%year%", dt.ToString("yyyy"));
-            macro = macro.Replace("%month%", dt.ToString("MM"));
-            macro = macro.Replace("%day%", dt.ToString("dd"));
-            macro = macro.Replace("%hour%", dt.ToString("HH"));
-            macro = macro.Replace("%minute%", dt.ToString("mm"));
-            macro = macro.Replace("%second%", dt.ToString("ss"));
-            macro = macro.Replace("%millisecond%", dt.ToString("fff"));
-            macro = macro.Replace("%date%", dt.ToString("yyyy-MM-dd"));
-            macro = macro.Replace("%time%", dt.ToString("HH-mm-ss-fff"));
-            macro = macro.Replace("%format%", format);
-            macro = macro.Replace("%title%", activeWindowTitle);
-
-            return macro;
-        }
-
-        /// <summary>
         /// Gets the bitmap source based on X, Y, Width, Height, and a bitmap image.
         /// </summary>
         /// <param name="x">The X coordinate of the image location.</param>
@@ -166,6 +129,43 @@ namespace xaimatzu
             }
 
             return bitmapSource;
+        }
+
+        /// <summary>
+        /// Parses the provided macro for macro tags and returns the resulting value based on those macro tags.
+        /// </summary>
+        /// <param name="macro">The macro to provide that contains macro tags (such as %date% and %time%).</param>
+        /// <param name="format">The image format represented as a string (such as "jpeg").</param>
+        /// <param name="activeWindowTitle">The title of the active window.</param>
+        /// <returns>The parsed macro (so %date% in the macro will return the current date in the format yyyy-MM-dd).</returns>
+        public string ParseMacroTags(string macro, string format, string activeWindowTitle)
+        {
+            DateTime dt = DateTime.Now;
+
+            // Strip invalid Windows characters in the title.
+            activeWindowTitle = activeWindowTitle.Replace(@"\", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("/", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace(":", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("*", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("?", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("\"", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("<", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace(">", string.Empty);
+            activeWindowTitle = activeWindowTitle.Replace("|", string.Empty);
+
+            macro = macro.Replace("%year%", dt.ToString("yyyy"));
+            macro = macro.Replace("%month%", dt.ToString("MM"));
+            macro = macro.Replace("%day%", dt.ToString("dd"));
+            macro = macro.Replace("%hour%", dt.ToString("HH"));
+            macro = macro.Replace("%minute%", dt.ToString("mm"));
+            macro = macro.Replace("%second%", dt.ToString("ss"));
+            macro = macro.Replace("%millisecond%", dt.ToString("fff"));
+            macro = macro.Replace("%date%", dt.ToString("yyyy-MM-dd"));
+            macro = macro.Replace("%time%", dt.ToString("HH-mm-ss-fff"));
+            macro = macro.Replace("%format%", format.ToLower());
+            macro = macro.Replace("%title%", activeWindowTitle);
+
+            return macro;
         }
 
         /// <summary>
@@ -338,6 +338,8 @@ namespace xaimatzu
                             path = AppDomain.CurrentDomain.BaseDirectory + path;
                         }
                     }
+
+                    format = format.ToLower();
 
                     if (format.Equals("bmp"))
                     {

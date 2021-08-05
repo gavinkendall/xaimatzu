@@ -21,22 +21,22 @@
                 <ImageBrush ImageSource="images/screenshot_preview.png"/>
             </Button.Background>
         </Button>
-        <Button x:Name="buttonRegionSelect" HorizontalAlignment="Left" Margin="70,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonRegionSelect_Click" BorderThickness="0" ToolTip="Region Select">
+        <Button x:Name="buttonRegionSelect" HorizontalAlignment="Left" Margin="72,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonRegionSelect_Click" BorderThickness="0" ToolTip="Region Select">
             <Button.Background>
                 <ImageBrush ImageSource="images/region_select.png"/>
             </Button.Background>
         </Button>
-        <Button x:Name="buttonTakeScreenshot" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonTakeScreenshot_Click" BorderThickness="0" ToolTip="Take Screenshot">
+        <Button x:Name="buttonTakeScreenshot" HorizontalAlignment="Left" Margin="104,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonTakeScreenshot_Click" BorderThickness="0" ToolTip="Take Screenshot">
             <Button.Background>
                 <ImageBrush ImageSource="images/take_screenshot.png"/>
             </Button.Background>
         </Button>
-        <Button x:Name="buttonRegionSelectTakeScreenshot" HorizontalAlignment="Left" Margin="130,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonRegionSelectTakeScreenshot_Click" BorderThickness="0" ToolTip="Region Select / Take Screenshot">
+        <Button x:Name="buttonRegionSelectTakeScreenshot" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonRegionSelectTakeScreenshot_Click" BorderThickness="0" ToolTip="Region Select / Take Screenshot">
             <Button.Background>
                 <ImageBrush ImageSource="images/region_select_take_screenshot.png"/>
             </Button.Background>
         </Button>
-        <Button x:Name="buttonHelp" HorizontalAlignment="Left" Margin="160,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonHelp_Click" BorderThickness="0" ToolTip="Help">
+        <Button x:Name="buttonHelp" HorizontalAlignment="Left" Margin="165,10,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="buttonHelp_Click" BorderThickness="0" ToolTip="Help">
             <Button.Background>
                 <ImageBrush ImageSource="images/help.png"/>
             </Button.Background>

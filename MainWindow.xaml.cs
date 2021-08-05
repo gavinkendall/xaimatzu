@@ -79,7 +79,7 @@ namespace xaimatzu
 
             _settings.Date.SelectedDate = DateTime.Now.Date;
 
-            _settings.textBoxFile.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
+            _settings.textBoxMacro.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
 
             _timer.Start();
 
@@ -175,7 +175,7 @@ namespace xaimatzu
 
                     if (rgxCommandLineOptionFile.IsMatch(arg))
                     {
-                        _settings.textBoxFile.Text = rgxCommandLineOptionFile.Match(arg).Groups["File"].Value;
+                        _settings.textBoxMacro.Text = rgxCommandLineOptionFile.Match(arg).Groups["File"].Value;
                     }
 
                     if (rgxCommandLineOptionSave.IsMatch(arg))
@@ -190,7 +190,7 @@ namespace xaimatzu
 
                     if (rgxCommandLineOptionActiveWindow.IsMatch(arg))
                     {
-                        _settings.ActiveWindow = true;
+                        _settings.radioButtonActiveWindow.IsChecked = true;
                     }
 
                     if (rgxCommandLineOptionActiveWindowTitle.IsMatch(arg))
@@ -274,7 +274,7 @@ namespace xaimatzu
                 buttonTakeScreenshot_Click(null, null);
             }
 
-            _settings.UpdatePreview();
+            _settings.UpdateScreenshotPreview();
         }
 
         private void buttonHelp_Click(object sender, RoutedEventArgs e)
@@ -352,7 +352,7 @@ namespace xaimatzu
         {
             activeWindowTitle = activeWindowTitle.Trim();
 
-            _settings.ActiveWindow = true;
+            _settings.radioButtonActiveWindow.IsChecked = true;
 
             _screenCapture.ActiveWindowTitle = activeWindowTitle;
         }

@@ -33,8 +33,8 @@ namespace xaimatzu
     public partial class Settings : Window
     {
         private ScreenCapture _screenCapture;
+        private FormRegionSelectWithMouse _formRegionSelectWithMouse;
 
-        public bool ActiveWindow;
         public ScreenshotPreview screenshotPreview;
 
         public Settings(ScreenCapture screenCapture, ScreenshotPreview screenshotPreview)
@@ -69,6 +69,94 @@ namespace xaimatzu
             Hide();
         }
 
+        private void radioButtonActiveWindow_Checked(object sender, RoutedEventArgs e)
+        {
+            radioButtonActiveWindow_Click(sender, e);
+        }
+
+        private void radioButtonActiveWindow_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)radioButtonActiveWindow.IsChecked)
+            {
+                labelScreen.IsEnabled = false;
+                labelX.IsEnabled = false;
+                labelY.IsEnabled = false;
+                labelWidth.IsEnabled = false;
+                labelHeight.IsEnabled = false;
+
+                comboBoxScreen.IsEnabled = false;
+                buttonRegionSelect.IsEnabled = false;
+
+                textBoxX.IsEnabled = false;
+                textBoxY.IsEnabled = false;
+                textBoxWidth.IsEnabled = false;
+                textBoxHeight.IsEnabled = false;
+            }
+            else
+            {
+                labelScreen.IsEnabled = true;
+                labelX.IsEnabled = true;
+                labelY.IsEnabled = true;
+                labelWidth.IsEnabled = true;
+                labelHeight.IsEnabled = true;
+
+                comboBoxScreen.IsEnabled = true;
+                buttonRegionSelect.IsEnabled = true;
+
+                textBoxX.IsEnabled = true;
+                textBoxY.IsEnabled = true;
+                textBoxWidth.IsEnabled = true;
+                textBoxHeight.IsEnabled = true;
+            }
+        }
+
+        private void radioButtonRegion_Checked(object sender, RoutedEventArgs e)
+        {
+            radioButtonRegion_Click(sender, e);
+        }
+
+        private void radioButtonRegion_Click(object sender, RoutedEventArgs e)
+        {
+            // Avoid null reference exception due to event handler initializing on load.
+            if (labelScreen == null)
+            {
+                return;
+            }
+
+            if ((bool)radioButtonRegion.IsChecked)
+            {
+                labelScreen.IsEnabled = true;
+                labelX.IsEnabled = true;
+                labelY.IsEnabled = true;
+                labelWidth.IsEnabled = true;
+                labelHeight.IsEnabled = true;
+
+                comboBoxScreen.IsEnabled = true;
+                buttonRegionSelect.IsEnabled = true;
+
+                textBoxX.IsEnabled = true;
+                textBoxY.IsEnabled = true;
+                textBoxWidth.IsEnabled = true;
+                textBoxHeight.IsEnabled = true;
+            }
+            else
+            {
+                labelScreen.IsEnabled = false;
+                labelX.IsEnabled = false;
+                labelY.IsEnabled = false;
+                labelWidth.IsEnabled = false;
+                labelHeight.IsEnabled = false;
+
+                comboBoxScreen.IsEnabled = false;
+                buttonRegionSelect.IsEnabled = false;
+
+                textBoxX.IsEnabled = false;
+                textBoxY.IsEnabled = false;
+                textBoxWidth.IsEnabled = false;
+                textBoxHeight.IsEnabled = false;
+            }
+        }
+
         private void comboBoxScreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
@@ -85,24 +173,36 @@ namespace xaimatzu
             comboBoxScreen.SelectedIndex = 0;
         }
 
-        private void buttonRefreshProcessList_Click(object sender, RoutedEventArgs e)
+        private void comboBoxFormat_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RefreshProcessList();
+            UpdateMacroPreview();
         }
 
-        private void buttonTestFocus_Click(object sender, RoutedEventArgs e)
+        private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
         {
-            if (listBoxProcessName.SelectedItem != null &&
-                !string.IsNullOrEmpty(listBoxProcessName.SelectedItem.ToString()) &&
-                int.TryParse(textBoxDelayBefore.Text, out int delayBefore) &&
-                int.TryParse(textBoxDelayAfter.Text, out int delayAfter))
-            {
-                DoApplicationFocus(listBoxProcessName.SelectedItem.ToString(), delayBefore, delayAfter);
-            }
-            else
-            {
-                MessageBox.Show("No application was selected from the process list.", "No Application Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(saveToClipboard: false);
+            _formRegionSelectWithMouse.MouseSelectionCompleted += formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted;
+            _formRegionSelectWithMouse.LoadCanvas();
+        }
+
+        private void formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted(object sender, EventArgs e)
+        {
+            int x = _formRegionSelectWithMouse.outputX + 1;
+            int y = _formRegionSelectWithMouse.outputY + 1;
+            int width = _formRegionSelectWithMouse.outputWidth - 2;
+            int height = _formRegionSelectWithMouse.outputHeight - 2;
+
+            textBoxX.Text = x.ToString();
+            textBoxY.Text = y.ToString();
+            textBoxWidth.Text = width.ToString();
+            textBoxHeight.Text = height.ToString();
+
+            _formRegionSelectWithMouse.Close();
+        }
+
+        private void textBoxMacro_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateMacroPreview();
         }
 
         private void checkBoxApplicationFocus_Checked(object sender, RoutedEventArgs e)
@@ -134,6 +234,31 @@ namespace xaimatzu
             }
         }
 
+        private void buttonRefreshProcessList_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshProcessList();
+        }
+
+        private void buttonTestFocus_Click(object sender, RoutedEventArgs e)
+        {
+            if (listBoxProcessName.SelectedItem != null &&
+                !string.IsNullOrEmpty(listBoxProcessName.SelectedItem.ToString()) &&
+                int.TryParse(textBoxDelayBefore.Text, out int delayBefore) &&
+                int.TryParse(textBoxDelayAfter.Text, out int delayAfter))
+            {
+                DoApplicationFocus(listBoxProcessName.SelectedItem.ToString(), delayBefore, delayAfter);
+            }
+            else
+            {
+                MessageBox.Show("No application was selected from the process list.", "No Application Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateMacroPreview()
+        {
+            textBoxMacroPreview.Text = _screenCapture.ParseMacroTags(textBoxMacro.Text, comboBoxFormat.SelectedItem.ToString(), _screenCapture.GetActiveWindowTitle());
+        }
+
         /// <summary>
         /// Takes a screenshot of either the active window or a region of the screen (that could also be sent to the clipboard and/or saved to a file).
         /// </summary>
@@ -151,16 +276,16 @@ namespace xaimatzu
                 int width = 0;
                 int height = 0;
 
-                if (ActiveWindow)
+                if ((bool)radioButtonActiveWindow.IsChecked)
                 {
-                    if (!string.IsNullOrEmpty(textBoxFile.Text))
+                    if (!string.IsNullOrEmpty(textBoxMacro.Text))
                     {
                         bitmapSource = _screenCapture.TakeScreenshot(0, 0, 0, 0, captureActiveWindow: true, out bitmap);
                     }
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(textBoxFile.Text) &&
+                    if (!string.IsNullOrEmpty(textBoxMacro.Text) &&
                         int.TryParse(textBoxX.Text, out x) &&
                         int.TryParse(textBoxY.Text, out y) &&
                         int.TryParse(textBoxWidth.Text, out width) &&
@@ -180,7 +305,7 @@ namespace xaimatzu
 
                 if (save)
                 {
-                    _screenCapture.SaveScreenshot(bitmap, textBoxFile.Text, comboBoxFormat.SelectedItem.ToString().ToLower());
+                    _screenCapture.SaveScreenshot(bitmap, textBoxMacro.Text, comboBoxFormat.SelectedItem.ToString());
                 }
             }
             catch (Exception)
@@ -199,7 +324,7 @@ namespace xaimatzu
         /// <summary>
         /// Updates the screenshot preview window with the selected area of the screen.
         /// </summary>
-        public void UpdatePreview()
+        public void UpdateScreenshotPreview()
         {
             if (!screenshotPreview.IsVisible)
             {

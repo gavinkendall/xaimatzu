@@ -311,10 +311,29 @@ namespace xaimatzu
             _settings.textBoxWidth.Text = width.ToString();
             _settings.textBoxHeight.Text = height.ToString();
 
-            if ((bool)checkBoxSave.IsChecked)
-            {
-                buttonTakeScreenshot_Click(sender, null);
-            }
+            _formRegionSelectWithMouse.Close();
+        }
+
+        private void buttonRegionSelectTakeScreenshot_Click(object sender, RoutedEventArgs e)
+        {
+            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(checkBoxClipboard.IsChecked);
+            _formRegionSelectWithMouse.MouseSelectionCompleted += formRegionSelectTakeScreenshotWithMouse_RegionSelectMouseSelectionCompleted;
+            _formRegionSelectWithMouse.LoadCanvas();
+        }
+
+        private void formRegionSelectTakeScreenshotWithMouse_RegionSelectMouseSelectionCompleted(object sender, EventArgs e)
+        {
+            int x = _formRegionSelectWithMouse.outputX + 1;
+            int y = _formRegionSelectWithMouse.outputY + 1;
+            int width = _formRegionSelectWithMouse.outputWidth - 2;
+            int height = _formRegionSelectWithMouse.outputHeight - 2;
+
+            _settings.textBoxX.Text = x.ToString();
+            _settings.textBoxY.Text = y.ToString();
+            _settings.textBoxWidth.Text = width.ToString();
+            _settings.textBoxHeight.Text = height.ToString();
+
+            buttonTakeScreenshot_Click(sender, null);
 
             _formRegionSelectWithMouse.Close();
         }

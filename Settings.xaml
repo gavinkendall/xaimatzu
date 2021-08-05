@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu - Settings" Height="345" Width="602" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Window_Closing" Icon="xaimatzu.ico" Loaded="Window_Loaded">
+        Title="Xaimatzu - Settings" Height="345" Width="602" Background="#FFC7C7C7" ResizeMode="NoResize" Topmost="True" Closing="Window_Closing" Icon="xaimatzu.ico" Loaded="Window_Loaded" ShowInTaskbar="False">
     <Grid>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="316" VerticalAlignment="Top" Width="596">
             <TabItem Header="Screenshot" IsSelected="True">

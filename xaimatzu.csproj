@@ -136,5 +136,14 @@
   <ItemGroup>
     <Resource Include="xaimatzu.ico" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="images\help.png" />
+    <Resource Include="images\region_select.png" />
+    <Resource Include="images\region_select_take_screenshot.png" />
+    <Resource Include="images\screenshot_preview.png" />
+    <Resource Include="images\settings.png" />
+    <Resource Include="images\take_screenshot.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu - Screenshot Preview" Height="445.574" Width="547.705" Background="Black" Topmost="True" Closing="Window_Closing" Icon="xaimatzu.ico" ShowInTaskbar="False">
+        Title="Xaimatzu - Screenshot Preview" Height="445.574" Width="547.705" Background="Black" Topmost="True" Closing="Window_Closing" Icon="xaimatzu.ico" ShowInTaskbar="False" MinWidth="400">
     <Grid HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch">
         <Image x:Name="imageScreenshotPreview" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"/>
     </Grid>

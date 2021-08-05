@@ -61,18 +61,28 @@ namespace xaimatzu.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap help {
+            get {
+                object obj = ResourceManager.GetObject("help", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
         ///{\colortbl ;\red0\green0\blue255;}
         ///{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
-        ///\pard\sa200\sl276\slmult1\qc\f0\fs22\lang9 Xaimatzu 2.2.0.0\par
+        ///\pard\sa200\sl276\slmult1\qc\f0\fs22\lang9 Xaimatzu\par
         ///\par
-        ///An artisanal screen capture utility handcrafted for fast and timely screenshots.\par
+        ///An artisanal screen capture utility handcrafted for fast and timely screenshots\par
         ///\par
         ///Copyright (c) 2021 Gavin Kendall\par
         ///\par
         ///\par
         ///
-        ///\pard\sa200\sl276\slmult1 This program is free software: you can redistribute it and/or modify it under the terms of  [rest of string was truncated]&quot;;.
+        ///\pard\sa200\sl276\slmult1 This program is free software: you can redistribute it and/or modify it under the terms of the GNU G [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string help_0_About {
             get {
@@ -89,6 +99,56 @@ namespace xaimatzu.Properties {
         internal static string help_1_Welcome {
             get {
                 return ResourceManager.GetString("help_1_Welcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap region_select {
+            get {
+                object obj = ResourceManager.GetObject("region_select", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap region_select_take_screenshot {
+            get {
+                object obj = ResourceManager.GetObject("region_select_take_screenshot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap screenshot_preview {
+            get {
+                object obj = ResourceManager.GetObject("screenshot_preview", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap settings {
+            get {
+                object obj = ResourceManager.GetObject("settings", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap take_screenshot {
+            get {
+                object obj = ResourceManager.GetObject("take_screenshot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

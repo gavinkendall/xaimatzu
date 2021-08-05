@@ -3,7 +3,7 @@
 //     Copyright (c) 2021 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
-// <summary></summary>
+// <summary>A window for determining various settings.</summary>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ namespace xaimatzu
 
                 if (bitmapSource != null)
                 {
-                    screenshotPreview.Title = "Xaimatzu - Screenshot Preview (" + bitmapSource.Width + "x" + bitmapSource.Height + ")";
+                    screenshotPreview.Title = "Xaimatzu - Screenshot Preview (" + x + "," + y + " " + width + "x" + height + ")";
                     screenshotPreview.imageScreenshotPreview.Source = bitmapSource;
                 }
             }

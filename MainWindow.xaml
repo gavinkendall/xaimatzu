@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu (2.2.0.0)" Height="195" Width="222.062" Background="#FFFFFF" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Hidden">
+        Title="Xaimatzu (3.0)" Height="250" Width="222.062" Background="#FFFFFF" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Hidden">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -13,8 +13,10 @@
         </Grid.ColumnDefinitions>
         <Button x:Name="buttonHelp" Content="Help" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonHelp_Click"/>
         <Button x:Name="buttonSettings" Content="Settings" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonSettings_Click"/>
-        <Button x:Name="buttonRegionSelect" Content="Region Select" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonRegionSelect_Click"/>
-        <Button x:Name="buttonScreenshotPreview" Content="Screenshot Preview" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonScreenshotPreview_Click"/>
-        <Button x:Name="buttonTakeScreenshot" Content="Take Screenshot" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonTakeScreenshot_Click"/>
-     </Grid>
+        <Button x:Name="buttonScreenshotPreview" Content="Screenshot Preview" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonScreenshotPreview_Click"/>
+        <Button x:Name="buttonTakeScreenshot" Content="Take Screenshot" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonTakeScreenshot_Click"/>
+        <Button x:Name="buttonRegionSelect" Content="Region Select / Take Screenshot" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="197" Height="25" Click="buttonRegionSelect_Click"/>
+        <CheckBox x:Name="checkBoxClipboard" Content="Send screenshot to clipboard" HorizontalAlignment="Left" Margin="10,168,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False"/>
+        <CheckBox x:Name="checkBoxSave" Content="Save screenshot to file" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False"/>
+    </Grid>
 </Window>

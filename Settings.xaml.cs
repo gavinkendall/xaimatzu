@@ -85,11 +85,6 @@ namespace xaimatzu
             comboBoxScreen.SelectedIndex = 0;
         }
 
-        private void screenshotAttribute_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TakeScreenshot();
-        }
-
         private void buttonRefreshProcessList_Click(object sender, RoutedEventArgs e)
         {
             RefreshProcessList();
@@ -108,6 +103,11 @@ namespace xaimatzu
             {
                 MessageBox.Show("No application was selected from the process list.", "No Application Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        private void checkBoxApplicationFocus_Checked(object sender, RoutedEventArgs e)
+        {
+            checkBoxApplicationFocus_Click(sender, e);
         }
 
         private void checkBoxApplicationFocus_Click(object sender, RoutedEventArgs e)
@@ -137,7 +137,7 @@ namespace xaimatzu
         /// <summary>
         /// Takes a screenshot of either the active window or a region of the screen (that could also be sent to the clipboard and/or saved to a file).
         /// </summary>
-        public void TakeScreenshot()
+        public void TakeScreenshot(bool clipboard, bool save)
         {
             Bitmap bitmap = null;
             BitmapSource bitmapSource = null;
@@ -145,8 +145,6 @@ namespace xaimatzu
             try
             {
                 DoApplicationFocus();
-
-                bool clipboard = (bool)checkBoxClipboard.IsChecked;
 
                 int x = 0;
                 int y = 0;
@@ -180,7 +178,7 @@ namespace xaimatzu
                     }
                 }
 
-                if ((bool)checkBoxSave.IsChecked)
+                if (save)
                 {
                     _screenCapture.SaveScreenshot(bitmap, textBoxFile.Text, comboBoxFormat.SelectedItem.ToString().ToLower());
                 }

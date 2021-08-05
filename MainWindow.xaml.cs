@@ -180,12 +180,12 @@ namespace xaimatzu
 
                     if (rgxCommandLineOptionSave.IsMatch(arg))
                     {
-                        _settings.checkBoxSave.IsChecked = true;
+                        checkBoxSave.IsChecked = true;
                     }
 
                     if (rgxCommandLineOptionClipboard.IsMatch(arg))
                     {
-                        _settings.checkBoxClipboard.IsChecked = true;
+                        checkBoxClipboard.IsChecked = true;
                     }
 
                     if (rgxCommandLineOptionActiveWindow.IsMatch(arg))
@@ -237,7 +237,7 @@ namespace xaimatzu
                 {
                     if (arg.Equals("-capture"))
                     {
-                        _settings.TakeScreenshot();
+                        _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked);
                     }
 
                     if (arg.Equals("-exit"))
@@ -294,7 +294,7 @@ namespace xaimatzu
 
         private void buttonRegionSelect_Click(object sender, RoutedEventArgs e)
         {
-            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(_settings.checkBoxClipboard.IsChecked);
+            _formRegionSelectWithMouse = new FormRegionSelectWithMouse(checkBoxClipboard.IsChecked);
             _formRegionSelectWithMouse.MouseSelectionCompleted += formRegionSelectWithMouse_RegionSelectMouseSelectionCompleted;
             _formRegionSelectWithMouse.LoadCanvas();
         }
@@ -311,7 +311,7 @@ namespace xaimatzu
             _settings.textBoxWidth.Text = width.ToString();
             _settings.textBoxHeight.Text = height.ToString();
 
-            if ((bool)_settings.checkBoxSave.IsChecked)
+            if ((bool)checkBoxSave.IsChecked)
             {
                 buttonTakeScreenshot_Click(sender, null);
             }
@@ -326,7 +326,7 @@ namespace xaimatzu
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
-            _settings.TakeScreenshot();
+            _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked);
         }
 
         private void SetActiveWindowTitle(string activeWindowTitle)

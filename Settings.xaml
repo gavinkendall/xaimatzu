@@ -18,18 +18,16 @@
                     <Label x:Name="labelY" Content="Y:" HorizontalAlignment="Left" Margin="213,40,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="Black" Height="26" Width="19"/>
                     <Label x:Name="labelWidth" Content="Width:" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="Black" Height="26" Width="45"/>
                     <Label x:Name="labelHeight" Content="Height:" Margin="213,68,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="Black" HorizontalAlignment="Left" Width="48" Height="26"/>
-                    <TextBox x:Name="textBoxX" HorizontalAlignment="Left" Height="23" Margin="63,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
-                    <TextBox x:Name="textBoxY" Height="23" Margin="268,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged" HorizontalAlignment="Left" Width="123"/>
-                    <TextBox x:Name="textBoxWidth" HorizontalAlignment="Left" Height="23" Margin="63,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged"/>
-                    <TextBox x:Name="textBoxHeight" Height="23" Margin="268,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" TextChanged="screenshotAttribute_TextChanged" HorizontalAlignment="Left" Width="123"/>
+                    <TextBox x:Name="textBoxX" HorizontalAlignment="Left" Height="23" Margin="63,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6"/>
+                    <TextBox x:Name="textBoxY" Height="23" Margin="268,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" HorizontalAlignment="Left" Width="123"/>
+                    <TextBox x:Name="textBoxWidth" HorizontalAlignment="Left" Height="23" Margin="63,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Background="#FFE6E6E6"/>
+                    <TextBox x:Name="textBoxHeight" Height="23" Margin="268,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" HorizontalAlignment="Left" Width="123"/>
                     <DatePicker x:Name="Date" HorizontalAlignment="Left" Margin="63,99,0,0" VerticalAlignment="Top" IsTodayHighlighted="True" Width="120" Height="24"/>
                     <Label x:Name="labelTime" Content="Time:" HorizontalAlignment="Left" Margin="213,96,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="38"/>
                     <Label x:Name="labelDate" Content="Date:" HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="37"/>
                     <TextBox x:Name="textBoxTime" Height="23" Margin="268,99,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" HorizontalAlignment="Left" Width="123"/>
                     <Label x:Name="labelFile" Content="File:" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="31"/>
                     <TextBox x:Name="textBoxFile" HorizontalAlignment="Left" Height="23" Margin="63,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="328" Background="#FFE6E6E6"/>
-                    <CheckBox x:Name="checkBoxClipboard" Content="Send captured image to clipboard" HorizontalAlignment="Left" Margin="13,161,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False"/>
-                    <CheckBox x:Name="checkBoxSave" Content="Save screenshot to file" HorizontalAlignment="Left" Margin="13,181,0,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Active Window Title">
@@ -37,7 +35,7 @@
             </TabItem>
             <TabItem Header="Application Focus">
                 <Grid Background="#FFFFFF">
-                    <CheckBox x:Name="checkBoxApplicationFocus" Content="Focus on selected application in process list when screenshot taken" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.114,-1.2" Click="checkBoxApplicationFocus_Click"/>
+                    <CheckBox x:Name="checkBoxApplicationFocus" Content="Focus on selected application in process list when screenshot taken" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.114,-1.2" Click="checkBoxApplicationFocus_Click" Checked="checkBoxApplicationFocus_Checked"/>
                     <ListBox x:Name="listBoxProcessName" HorizontalAlignment="Left" Height="246" VerticalAlignment="Top" Width="384" IsEnabled="False" Margin="10,30,0,0"/>
                     <Label x:Name="labelDelayBefore" Content="Delay Before:" HorizontalAlignment="Left" Margin="399,30,0,0" VerticalAlignment="Top" IsEnabled="False"/>
                     <TextBox x:Name="textBoxDelayBefore" Height="23" Margin="484,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFE6E6E6" HorizontalAlignment="Left" Width="94" IsEnabled="False"/>

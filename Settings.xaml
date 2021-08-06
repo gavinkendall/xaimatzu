@@ -39,15 +39,27 @@
             </TabItem>
             <TabItem Header="Schedule">
                 <Grid Background="#FFFFFF">
-                    <Label x:Name="labelDate" Content="Date:" HorizontalAlignment="Left" Margin="84,172,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="37"/>
-                    <DatePicker x:Name="Date" HorizontalAlignment="Left" Margin="137,174,0,0" VerticalAlignment="Top" IsTodayHighlighted="True" Width="120" Height="24"/>
-                    <Label x:Name="labelTime" Content="Time:" HorizontalAlignment="Left" Margin="287,171,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="38"/>
-                    <TextBox x:Name="textBoxTime" Height="23" Margin="342,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="123"/>
+                    <TextBox HorizontalAlignment="Left" Height="69" Margin="10,10,0,0" TextWrapping="Wrap" Text="A screenshot can be taken on a particular date at a certain time. Xaimatzu is constantly checking the current date and time with the date and time defined here so you can simply type in a time in the Time field using the format HH:MM:SS (using the 24-hour time format) and a screenshot will be taken at that time (assuming, of course, you have already setup what you want to capture in Screen Capture settings)." VerticalAlignment="Top" Width="568" Background="#FFFFFF92" AcceptsReturn="True" IsUndoEnabled="False" IsReadOnly="True" Focusable="False" IsTabStop="False" AllowDrop="False"/>
+                    <Label x:Name="labelDate" Content="Date:" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="37"/>
+                    <DatePicker x:Name="Date" HorizontalAlignment="Left" Margin="10,126,0,0" VerticalAlignment="Top" IsTodayHighlighted="True" Width="120" Height="24"/>
+                    <Label x:Name="labelTime" Content="Time:" HorizontalAlignment="Left" Margin="10,177,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="38"/>
+                    <TextBox x:Name="textBoxTime" Height="23" Margin="10,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="123"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Active Window Title">
                 <Grid Background="#FFFFFF">
-
+                    <TextBox HorizontalAlignment="Left" Height="70" Margin="10,10,0,0" TextWrapping="Wrap" Text="Take screenshots based on the title of the active window. You can choose between two logical conditions; if the title contains the text defined in Comparison Text or if the title does not contain the text defined in Comparison Text. Either option will give you a few different match types to choose from. If you're using a regular expression match type make sure to put your regular expression in the Comparison Text field." VerticalAlignment="Top" Width="568" Background="#FFFFFF92" AcceptsReturn="True" IsUndoEnabled="False" IsReadOnly="True" Focusable="False" IsTabStop="False" AllowDrop="False"/>
+                    <CheckBox x:Name="checkBoxActiveWindowTitleComparisonCheck" Content="Capture if the title contains ..." HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top" Click="checkBoxActiveWindowTitleComparisonCheck_Click" Checked="checkBoxActiveWindowTitleComparisonCheck_Checked"/>
+                    <CheckBox x:Name="checkBoxActiveWindowTitleComparisonCheckReverse" Content="Capture if the title does not contain ..." HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" Click="checkBoxActiveWindowTitleComparisonCheckReverse_Click" Checked="checkBoxActiveWindowTitleComparisonCheckReverse_Checked"/>
+                    <Label x:Name="labelComparisonText" Content="Comparison Text:" HorizontalAlignment="Left" Margin="10,131,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <TextBox x:Name="textBoxActiveWindowTitleTextComparison" HorizontalAlignment="Left" Height="23" Margin="111,134,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="467" IsEnabled="False"/>
+                    <RadioButton x:Name="radioButtonCaseSensitiveMatch" Content="Case Sensitive Match" HorizontalAlignment="Left" Margin="10,162,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <RadioButton x:Name="radioButtonCaseInsensitiveMatch" Content="Case Insensitive Match" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False"/>
+                    <RadioButton x:Name="radioButtonRegularExpressionMatch" Content="Regular Expression Match" HorizontalAlignment="Left" Margin="10,202,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <Label x:Name="labelRegularExpression" Content="Test Regular Expression:" HorizontalAlignment="Left" Margin="50,222,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <TextBox x:Name="textBoxRegularExpression" HorizontalAlignment="Left" Height="23" Margin="191,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="387" IsEnabled="False" TextChanged="textBoxRegularExpression_TextChanged"/>
+                    <Label x:Name="labelTestValue" Content="Test Value:" HorizontalAlignment="Left" Margin="118,250,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <TextBox x:Name="textBoxTestValue" HorizontalAlignment="Left" Height="23" Margin="191,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="387" IsEnabled="False" TextChanged="textBoxTestValue_TextChanged"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Application Focus">

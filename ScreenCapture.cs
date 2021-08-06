@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -91,11 +92,6 @@ namespace xaimatzu
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
-        /// The title of the active window.
-        /// </summary>
-        public string ActiveWindowTitle { get; set; }
-
-        /// <summary>
         /// Gets the bitmap source based on X, Y, Width, Height, and a bitmap image.
         /// </summary>
         /// <param name="x">The X coordinate of the image location.</param>
@@ -129,6 +125,68 @@ namespace xaimatzu
             }
 
             return bitmapSource;
+        }
+
+        private bool ActiveWindowTitleMatchText(string activeWindowTitle, Settings settings)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(activeWindowTitle) && settings != null &&
+                    !string.IsNullOrEmpty(settings.textBoxActiveWindowTitleTextComparison.Text))
+                {
+                    settings.textBoxActiveWindowTitleTextComparison.Text = settings.textBoxActiveWindowTitleTextComparison.Text.Trim();
+
+                    if ((bool)settings.radioButtonCaseSensitiveMatch.IsChecked)
+                    {
+                        return activeWindowTitle.Contains(settings.textBoxActiveWindowTitleTextComparison.Text);
+                    }
+                    else if ((bool)settings.radioButtonCaseInsensitiveMatch.IsChecked)
+                    {
+                        return activeWindowTitle.ToLower().Contains(settings.textBoxActiveWindowTitleTextComparison.Text.ToLower());
+                    }
+                    else if ((bool)settings.radioButtonRegularExpressionMatch.IsChecked)
+                    {
+                        return Regex.IsMatch(activeWindowTitle, settings.textBoxActiveWindowTitleTextComparison.Text);
+                    }
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool ActiveWindowTitleDoesNotMatchText(string activeWindowTitle, Settings settings)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(activeWindowTitle) && settings != null &&
+                        !string.IsNullOrEmpty(settings.textBoxActiveWindowTitleTextComparison.Text))
+                {
+                    settings.textBoxActiveWindowTitleTextComparison.Text = settings.textBoxActiveWindowTitleTextComparison.Text.Trim();
+
+                    if ((bool)settings.radioButtonCaseSensitiveMatch.IsChecked)
+                    {
+                        return !activeWindowTitle.Contains(settings.textBoxActiveWindowTitleTextComparison.Text);
+                    }
+                    else if ((bool)settings.radioButtonCaseInsensitiveMatch.IsChecked)
+                    {
+                        return !activeWindowTitle.ToLower().Contains(settings.textBoxActiveWindowTitleTextComparison.Text.ToLower());
+                    }
+                    else if ((bool)settings.radioButtonRegularExpressionMatch.IsChecked)
+                    {
+                        return !Regex.IsMatch(activeWindowTitle, settings.textBoxActiveWindowTitleTextComparison.Text);
+                    }
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -269,21 +327,30 @@ namespace xaimatzu
         /// <param name="y">The Y coordinate of the image location.</param>
         /// <param name="width">The width of the image.</param>
         /// <param name="height">The height of the image.</param>
-        /// <param name="captureActiveWindow">Determines if we capture the active window.</param>
         /// <param name="bitmap">The bitmap where the image will be stored after screen capture.</param>
+        /// <param name="settings">Access to settings.</param>
         /// <returns>The bitmap source to be used for the clipboard and screenshot preview.</returns>
-        public BitmapSource TakeScreenshot(int x, int y, int width, int height, bool captureActiveWindow, out Bitmap bitmap)
+        public BitmapSource TakeScreenshot(int x, int y, int width, int height, out Bitmap bitmap, Settings settings)
         {
             try
             {
-                if (!string.IsNullOrEmpty(ActiveWindowTitle) && !GetActiveWindowTitle().ToLower().Contains(ActiveWindowTitle.ToLower()))
+                if ((bool)settings.checkBoxActiveWindowTitleComparisonCheck.IsChecked &&
+                    !ActiveWindowTitleMatchText(GetActiveWindowTitle(), settings))
                 {
                     bitmap = null;
 
                     return null;
                 }
 
-                if (captureActiveWindow)
+                if ((bool)settings.checkBoxActiveWindowTitleComparisonCheckReverse.IsChecked &&
+                    !ActiveWindowTitleDoesNotMatchText(GetActiveWindowTitle(), settings))
+                {
+                    bitmap = null;
+
+                    return null;
+                }
+
+                if ((bool)settings.radioButtonActiveWindow.IsChecked)
                 {
                     bitmap = GetActiveWindowBitmap();
                 }

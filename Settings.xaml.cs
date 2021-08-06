@@ -21,8 +21,10 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace xaimatzu
@@ -35,6 +37,10 @@ namespace xaimatzu
         private ScreenCapture _screenCapture;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
 
+        SolidColorBrush _lightGreen;
+        SolidColorBrush _lightYellow;
+        SolidColorBrush _paleVioletRed;
+
         public ScreenshotPreview screenshotPreview;
 
         public Settings(ScreenCapture screenCapture, ScreenshotPreview screenshotPreview)
@@ -43,6 +49,12 @@ namespace xaimatzu
 
             _screenCapture = screenCapture;
             this.screenshotPreview = screenshotPreview;
+
+            _lightGreen = new SolidColorBrush(Colors.LightGreen);
+            _lightYellow = new SolidColorBrush(Colors.LightYellow);
+            _paleVioletRed = new SolidColorBrush(Colors.PaleVioletRed);
+
+            CheckRegex();
 
             textBoxDelayBefore.Text = "0";
             textBoxDelayAfter.Text = "0";
@@ -205,6 +217,122 @@ namespace xaimatzu
             UpdateMacroPreview();
         }
 
+        private void checkBoxActiveWindowTitleComparisonCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            checkBoxActiveWindowTitleComparisonCheck_Click(sender, e);
+        }
+
+        private void checkBoxActiveWindowTitleComparisonCheck_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)checkBoxActiveWindowTitleComparisonCheck.IsChecked)
+            {
+                checkBoxActiveWindowTitleComparisonCheckReverse.IsChecked = false;
+
+                labelComparisonText.IsEnabled = true;
+                labelRegularExpression.IsEnabled = true;
+                labelTestValue.IsEnabled = true;
+
+                radioButtonCaseSensitiveMatch.IsEnabled = true;
+                radioButtonCaseInsensitiveMatch.IsEnabled = true;
+                radioButtonRegularExpressionMatch.IsEnabled = true;
+
+                textBoxActiveWindowTitleTextComparison.IsEnabled = true;
+                textBoxRegularExpression.IsEnabled = true;
+                textBoxTestValue.IsEnabled = true;
+            }
+            else
+            {
+                labelComparisonText.IsEnabled = false;
+                labelRegularExpression.IsEnabled = false;
+                labelTestValue.IsEnabled = false;
+
+                radioButtonCaseSensitiveMatch.IsEnabled = false;
+                radioButtonCaseInsensitiveMatch.IsEnabled = false;
+                radioButtonRegularExpressionMatch.IsEnabled = false;
+
+                textBoxActiveWindowTitleTextComparison.IsEnabled = false;
+                textBoxRegularExpression.IsEnabled = false;
+                textBoxTestValue.IsEnabled = false;
+            }
+        }
+
+        private void checkBoxActiveWindowTitleComparisonCheckReverse_Checked(object sender, RoutedEventArgs e)
+        {
+            checkBoxActiveWindowTitleComparisonCheckReverse_Click(sender, e);
+        }
+
+        private void checkBoxActiveWindowTitleComparisonCheckReverse_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)checkBoxActiveWindowTitleComparisonCheckReverse.IsChecked)
+            {
+                checkBoxActiveWindowTitleComparisonCheck.IsChecked = false;
+                labelComparisonText.IsEnabled = true;
+                labelRegularExpression.IsEnabled = true;
+                labelTestValue.IsEnabled = true;
+
+                radioButtonCaseSensitiveMatch.IsEnabled = true;
+                radioButtonCaseInsensitiveMatch.IsEnabled = true;
+                radioButtonRegularExpressionMatch.IsEnabled = true;
+
+                textBoxActiveWindowTitleTextComparison.IsEnabled = true;
+                textBoxRegularExpression.IsEnabled = true;
+                textBoxTestValue.IsEnabled = true;
+            }
+            else
+            {
+                labelComparisonText.IsEnabled = false;
+                labelRegularExpression.IsEnabled = false;
+                labelTestValue.IsEnabled = false;
+
+                radioButtonCaseSensitiveMatch.IsEnabled = false;
+                radioButtonCaseInsensitiveMatch.IsEnabled = false;
+                radioButtonRegularExpressionMatch.IsEnabled = false;
+
+                textBoxActiveWindowTitleTextComparison.IsEnabled = false;
+                textBoxRegularExpression.IsEnabled = false;
+                textBoxTestValue.IsEnabled = false;
+            }
+        }
+
+        private void textBoxRegularExpression_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CheckRegex();
+        }
+
+        private void textBoxTestValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CheckRegex();
+        }
+
+        private void CheckRegex()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(textBoxRegularExpression.Text) ||
+                    string.IsNullOrEmpty(textBoxTestValue.Text))
+                {
+                    textBoxRegularExpression.Background = _lightYellow;
+                    textBoxTestValue.Background = _lightYellow;
+                }
+
+                if (Regex.IsMatch(textBoxTestValue.Text, textBoxRegularExpression.Text))
+                {
+                    textBoxRegularExpression.Background = _lightGreen;
+                    textBoxTestValue.Background = _lightGreen;
+                }
+                else
+                {
+                    textBoxRegularExpression.Background = _paleVioletRed;
+                    textBoxTestValue.Background = _paleVioletRed;
+                }
+            }
+            catch
+            {
+                textBoxRegularExpression.Background = _paleVioletRed;
+                textBoxTestValue.Background = _paleVioletRed;
+            }
+        }
+
         private void checkBoxApplicationFocus_Checked(object sender, RoutedEventArgs e)
         {
             checkBoxApplicationFocus_Click(sender, e);
@@ -280,7 +408,7 @@ namespace xaimatzu
                 {
                     if (!string.IsNullOrEmpty(textBoxMacro.Text))
                     {
-                        bitmapSource = _screenCapture.TakeScreenshot(0, 0, 0, 0, captureActiveWindow: true, out bitmap);
+                        bitmapSource = _screenCapture.TakeScreenshot(0, 0, 0, 0, out bitmap, this);
                     }
                 }
                 else
@@ -291,7 +419,7 @@ namespace xaimatzu
                         int.TryParse(textBoxWidth.Text, out width) &&
                         int.TryParse(textBoxHeight.Text, out height))
                     {
-                        bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, captureActiveWindow: false, out bitmap);
+                        bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, out bitmap, this);
                     }
                 }
 
@@ -330,21 +458,43 @@ namespace xaimatzu
             {
                 return;
             }
+            
+            int x = 0;
+            int y = 0;
+            int width = 0;
+            int height = 0;
 
-            if (int.TryParse(textBoxX.Text, out int x) &&
-                int.TryParse(textBoxY.Text, out int y) &&
-                int.TryParse(textBoxWidth.Text, out int width) &&
-                int.TryParse(textBoxHeight.Text, out int height))
+            string previewTitle = "Xaimatzu - Screenshot Preview";
+
+            screenshotPreview.imageScreenshotPreview.Source = null;
+
+            if ((bool)radioButtonActiveWindow.IsChecked)
             {
-                BitmapSource bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, captureActiveWindow: false, out Bitmap bitmap);
-                bitmap.Dispose();
-
-                if (bitmapSource != null)
-                {
-                    screenshotPreview.Title = "Xaimatzu - Screenshot Preview (" + x + "," + y + " " + width + "x" + height + ")";
-                    screenshotPreview.imageScreenshotPreview.Source = bitmapSource;
-                }
+                previewTitle += " (Active Window)";
             }
+            else
+            {
+                int.TryParse(textBoxX.Text, out x);
+                int.TryParse(textBoxY.Text, out y);
+                int.TryParse(textBoxWidth.Text, out width);
+                int.TryParse(textBoxHeight.Text, out height);
+
+                previewTitle += " (" + x + "," + y + " " + width + "x" + height + ")";
+            }
+
+            BitmapSource bitmapSource = _screenCapture.TakeScreenshot(x, y, width, height, out Bitmap bitmap, this);
+
+            if (bitmap != null)
+            {
+                bitmap.Dispose();
+            }
+
+            if (bitmapSource != null)
+            {
+                screenshotPreview.imageScreenshotPreview.Source = bitmapSource;
+            }
+
+            screenshotPreview.Title = previewTitle;
         }
 
         /// <summary>

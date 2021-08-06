@@ -111,6 +111,8 @@ namespace xaimatzu
                 Regex rgxCommandLineOptionClipboard = new Regex(@"^-clipboard$");
                 Regex rgxCommandLineOptionActiveWindow = new Regex(@"^-activeWindow$");
                 Regex rgxCommandLineOptionActiveWindowTitle = new Regex(@"^-activeWindowTitle=(?<ActiveWindowTitle>.+)$");
+                Regex rgxCommandLineOptionActiveWindowTitleMatch = new Regex(@"^-activeWindowTitleMatch=(?<ActiveWindowTitleMatch>.+)$"); // The command line option -activeWindowTitleMatch is the same as -activeWindowTitle (to maintain backwards compatibility with previous versions since -activeWindowTitle is the old command line option)
+                Regex rgxCommandLineOptionActiveWindowTitleNoMatch = new Regex(@"^-activeWindowTitleNoMatch=(?<ActiveWindowTitleNoMatch>.+)$"); // The reverse logic. So we do not match on active window title.
                 Regex rgxCommandLineOptionApplicationFocus = new Regex(@"^-applicationFocus=(?<ApplicationFocus>.+)$");
                 Regex rgxCommandLineOptionApplicationFocusDelayBefore = new Regex(@"^-applicationFocusDelayBefore=(?<ApplicationFocusDelayBefore>\d{1,5})$");
                 Regex rgxCommandLineOptionApplicationFocusDelayAfter = new Regex(@"^-applicationFocusDelayAfter=(?<ApplicationFocusDelayAfter>\d{1,5})$");
@@ -199,7 +201,27 @@ namespace xaimatzu
 
                         if (activeWindowTitle.Length > 0)
                         {
-                            SetActiveWindowTitle(activeWindowTitle);
+                            SetActiveWindowTitleMatch(activeWindowTitle);
+                        }
+                    }
+
+                    if (rgxCommandLineOptionActiveWindowTitleMatch.IsMatch(arg))
+                    {
+                        string activeWindowTitle = rgxCommandLineOptionActiveWindowTitleMatch.Match(arg).Groups["ActiveWindowTitleMatch"].Value;
+
+                        if (activeWindowTitle.Length > 0)
+                        {
+                            SetActiveWindowTitleMatch(activeWindowTitle);
+                        }
+                    }
+
+                    if (rgxCommandLineOptionActiveWindowTitleNoMatch.IsMatch(arg))
+                    {
+                        string activeWindowTitle = rgxCommandLineOptionActiveWindowTitleNoMatch.Match(arg).Groups["ActiveWindowTitleNoMatch"].Value;
+
+                        if (activeWindowTitle.Length > 0)
+                        {
+                            SetActiveWindowTitleNoMatch(activeWindowTitle);
                         }
                     }
 
@@ -348,13 +370,22 @@ namespace xaimatzu
             _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked);
         }
 
-        private void SetActiveWindowTitle(string activeWindowTitle)
+        private void SetActiveWindowTitleMatch(string activeWindowTitleTextComparison)
         {
-            activeWindowTitle = activeWindowTitle.Trim();
+            activeWindowTitleTextComparison = activeWindowTitleTextComparison.Trim();
 
-            _settings.radioButtonActiveWindow.IsChecked = true;
+            _settings.checkBoxActiveWindowTitleComparisonCheck.IsChecked = true;
 
-            _screenCapture.ActiveWindowTitle = activeWindowTitle;
+            _settings.textBoxActiveWindowTitleTextComparison.Text = activeWindowTitleTextComparison;
+        }
+
+        private void SetActiveWindowTitleNoMatch(string activeWindowTitleTextComparison)
+        {
+            activeWindowTitleTextComparison = activeWindowTitleTextComparison.Trim();
+
+            _settings.checkBoxActiveWindowTitleComparisonCheckReverse.IsChecked = true;
+
+            _settings.textBoxActiveWindowTitleTextComparison.Text = activeWindowTitleTextComparison;
         }
 
         private void buttonExit_Click(object sender, RoutedEventArgs e)

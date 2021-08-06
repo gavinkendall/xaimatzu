@@ -37,7 +37,9 @@ namespace xaimatzu
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             listBoxHelp.Items.Add("About");
+            listBoxHelp.Items.Add("License");
             listBoxHelp.Items.Add("Welcome");
+            listBoxHelp.Items.Add("Command Line Options");
 
             listBoxHelp.SelectedIndex = 0;
         }
@@ -53,23 +55,33 @@ namespace xaimatzu
         {
             richTextBoxHelpText.Document.Blocks.Clear();
 
-            MemoryStream stream;
+            MemoryStream stream = null;
 
             switch (listBoxHelp.SelectedIndex)
             {
                 case 0:
                     stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_0_About));
-                    richTextBoxHelpText.Selection.Load(stream, DataFormats.Rtf);
                     break;
 
                 case 1:
-                    stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_1_Welcome));
-                    richTextBoxHelpText.Selection.Load(stream, DataFormats.Rtf);
+                    stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_1_License));
+                    break;
+
+                case 2:
+                    stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_2_Welcome));
+                    break;
+
+                case 3:
+                    stream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.help_3_Command_Line_Options));
                     break;
             }
 
-            richTextBoxHelpText.CaretPosition = richTextBoxHelpText.CaretPosition.DocumentStart;
-            richTextBoxHelpText.ScrollToHome();
+            if (stream != null)
+            {
+                richTextBoxHelpText.Selection.Load(stream, DataFormats.Rtf);
+                richTextBoxHelpText.CaretPosition = richTextBoxHelpText.CaretPosition.DocumentStart;
+                richTextBoxHelpText.ScrollToHome();
+            }
         }
     }
 }

@@ -75,14 +75,13 @@ namespace xaimatzu.Properties {
         ///{\colortbl ;\red0\green0\blue255;}
         ///{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
         ///\pard\sa200\sl276\slmult1\qc\f0\fs22\lang9 Xaimatzu\par
+        ///{{\field{\*\fldinst{HYPERLINK https://xaimatzu.sourceforge.io/ }}{\fldrslt{https://xaimatzu.sourceforge.io/\ul0\cf0}}}}\f0\fs22\par
         ///\par
         ///An artisanal screen capture utility handcrafted for fast and timely screenshots\par
         ///\par
-        ///Copyright (c) 2021 Gavin Kendall\par
+        ///Copyright \&apos;a9 2021 Gavin Kendall\par
         ///\par
-        ///\par
-        ///
-        ///\pard\sa200\sl276\slmult1 This program is free software: you can redistribute it and/or modify it under the terms of the GNU G [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string help_0_About {
             get {
@@ -91,14 +90,49 @@ namespace xaimatzu.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Microsoft Sans Serif;}{\f1\fnil\fcharset0 Calibri;}}
+        ///{\colortbl ;\red0\green0\blue255;}
+        ///{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
+        ///\pard\f0\fs20 GNU GENERAL PUBLIC LICENSE\par
+        ///Version 3, 29 June 2007\par
+        ///\par
+        ///Copyright \&apos;a9 2007 Free Software Foundation, Inc. &lt;{{\field{\*\fldinst{HYPERLINK &quot;https://fsf.org/&quot;}}{\fldrslt{https://fsf.org/\ul0\cf0}}}}\f0\fs20 &gt;\par
+        ///\par
+        ///Everyone is permitted to copy and distribute ve [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string help_1_License {
+            get {
+                return ResourceManager.GetString("help_1_License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil\fcharset2 Symbol;}}
         ///{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
         ///\pard\sa200\sl276\slmult1\b\f0\fs22\lang9 Welcome\par
-        ///\b0 Xaimatzu is a screen capture utility developed to take fast and timely screenshots based on the selected area of a screen and a specified filepath. A screenshot can be taken on a chosen date at a particular time or immediately taken with the Take Screenshot button or when a mouse-driven selection of an area  [rest of string was truncated]&quot;;.
+        ///\b0 Xaimatzu is a screen capture utility developed to take fast and timely screenshots based on the selected area of a screen and a specified filepath. A screenshot can be taken on a chosen date at a particular time or immediately taken with the &quot;Take Screenshot&quot; button or when a mous [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string help_1_Welcome {
+        internal static string help_2_Welcome {
             get {
-                return ResourceManager.GetString("help_1_Welcome", resourceCulture);
+                return ResourceManager.GetString("help_2_Welcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+        ///{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
+        ///\pard\sa200\sl276\slmult1\b\f0\fs22\lang9 Command Line Options\b0\par
+        ///\par
+        ///You can provide command line options when running xaimatzu.exe from a command line.\par
+        ///\par
+        ///Specify X, Y, Width, Height, image format, and filepath:\par
+        ///xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file=&quot;My Screenshot.%format%&quot;\par
+        ///\par
+        ///Wait for a screenshot to be take [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string help_3_Command_Line_Options {
+            get {
+                return ResourceManager.GetString("help_3_Command_Line_Options", resourceCulture);
             }
         }
         

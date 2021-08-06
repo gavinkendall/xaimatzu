@@ -126,7 +126,9 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="help\help-0-About.rtf" />
-    <None Include="help\help-1-Welcome.rtf" />
+    <None Include="help\help-1-License.rtf" />
+    <None Include="help\help-2-Welcome.rtf" />
+    <None Include="help\help-3-Command-Line-Options.rtf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

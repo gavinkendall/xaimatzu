@@ -75,6 +75,15 @@
                     <TextBox HorizontalAlignment="Left" Height="117" Margin="401,108,0,0" TextWrapping="Wrap" Text="When enabled, you can have an application's process be focused on during the time a screenshot is taken. Select a process from the list then adjust the delay before and after the focus is set (in milliseconds)." VerticalAlignment="Top" Width="179" Background="#FFFFFF92" IsUndoEnabled="False" IsReadOnly="True" Focusable="False" AllowDrop="False" IsTabStop="False"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Run Executable">
+                <Grid Background="#FFFFFF">
+                    <TextBox HorizontalAlignment="Left" Height="118" Margin="10,10,0,0" TextWrapping="Wrap" Text="You can specify the path of an executable (*.exe), batch script (*.bat), PowerShell script (*.ps1), AutoHotKey script (*.ahk), or any other application or script after a screenshot is saved to the specifield file (see File Path settings) so that the file is opened using the executable defined in the Executable Path field. The filepath of the file containing the screenshot can be passed to the executable by using the %filepath% macro tag in the Executable Arguments field. Xaimatzu will check to see if you have certain applications installed on the C:\ drive to determine what executable to use. This could be Microsoft Paint, Snagit Editor, or ShareX Image Editor. Make sure &quot;Save screenshot to file&quot; and &quot;Run executable&quot; are enabled." VerticalAlignment="Top" Width="568" Background="#FFFFFF92" AcceptsReturn="True" IsUndoEnabled="False" IsReadOnly="True" Focusable="False" IsTabStop="False" AllowDrop="False"/>
+                    <Label Content="Executable Path:" HorizontalAlignment="Left" Margin="10,150,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textBoxExecutablePath" Height="23" TextWrapping="Wrap" Margin="10,181,10,82"/>
+                    <Label Content="Executable Arguments:" HorizontalAlignment="Left" Margin="10,222,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textBoxExecutableArguments" Height="23" TextWrapping="Wrap" Margin="10,253,10,10"/>
+                </Grid>
+            </TabItem>
         </TabControl>
 
     </Grid>

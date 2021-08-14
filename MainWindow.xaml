@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:xaimatzu"
         mc:Ignorable="d"
-        Title="Xaimatzu" Height="110" Width="201.062" Background="#FFFFFF" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Hidden" ShowInTaskbar="False">
+        Title="Xaimatzu" Height="130" Width="201.062" Background="#FFFFFF" ResizeMode="NoResize" Topmost="True" Closing="Main_Closing" Icon="xaimatzu.ico" Visibility="Visible" ShowInTaskbar="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -43,5 +43,6 @@
         </Button>
         <CheckBox x:Name="checkBoxClipboard" Content="Send screenshot to clipboard" HorizontalAlignment="Left" Margin="10,40,-190,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False" Grid.ColumnSpan="2"/>
         <CheckBox x:Name="checkBoxSave" Content="Save screenshot to file" HorizontalAlignment="Left" Margin="10,60,-190,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False" Grid.ColumnSpan="2"/>
+        <CheckBox x:Name="checkBoxRunExecutable" Content="Run executable" HorizontalAlignment="Left" Margin="10,80,-190,0" VerticalAlignment="Top" Foreground="Black" RenderTransformOrigin="3.634,0.133" Height="15" Width="375" IsChecked="False" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

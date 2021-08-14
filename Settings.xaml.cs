@@ -19,6 +19,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text.RegularExpressions;
@@ -60,6 +61,27 @@ namespace xaimatzu
             textBoxDelayAfter.Text = "0";
 
             buttonRefreshProcessList_Click(null, null);
+
+            // Microsoft Paint
+            if (File.Exists(@"C:\Windows\System32\mspaint.exe"))
+            {
+                textBoxExecutablePath.Text = @"C:\Windows\System32\mspaint.exe";
+                textBoxExecutableArguments.Text = "%filepath%";
+            }
+
+            // Snagit Editor
+            if (File.Exists(@"C:\Program Files\TechSmith\Snagit 2020\SnagitEditor.exe"))
+            {
+                textBoxExecutablePath.Text = @"C:\Program Files\TechSmith\Snagit 2020\SnagitEditor.exe";
+                textBoxExecutableArguments.Text = "%filepath%";
+            }
+
+            // ShareX Image Editor
+            if (File.Exists(@"C:\Program Files\ShareX\ShareX.exe"))
+            {
+                textBoxExecutablePath.Text = @"C:\Program Files\ShareX\ShareX.exe";
+                textBoxExecutableArguments.Text = "-ImageEditor %filepath%";
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -390,10 +412,12 @@ namespace xaimatzu
         /// <summary>
         /// Takes a screenshot of either the active window or a region of the screen (that could also be sent to the clipboard and/or saved to a file).
         /// </summary>
-        public void TakeScreenshot(bool clipboard, bool save)
+        public void TakeScreenshot(bool clipboard, bool save, bool runExecutable)
         {
             Bitmap bitmap = null;
             BitmapSource bitmapSource = null;
+
+            string path = string.Empty;
 
             try
             {
@@ -433,7 +457,22 @@ namespace xaimatzu
 
                 if (save)
                 {
-                    _screenCapture.SaveScreenshot(bitmap, textBoxMacro.Text, comboBoxFormat.SelectedItem.ToString());
+                    path = _screenCapture.SaveScreenshot(bitmap, textBoxMacro.Text, comboBoxFormat.SelectedItem.ToString());
+                }
+
+                if (runExecutable)
+                {
+                    if (!string.IsNullOrEmpty(textBoxExecutablePath.Text))
+                    {
+                        if (!string.IsNullOrEmpty(textBoxExecutableArguments.Text))
+                        {
+                            _ = Process.Start(textBoxExecutablePath.Text, textBoxExecutableArguments.Text.Replace("%filepath%", "\"" + path + "\""));
+                        }
+                        else
+                        {
+                            _ = Process.Start(textBoxExecutablePath.Text);
+                        }
+                    }
                 }
             }
             catch (Exception)

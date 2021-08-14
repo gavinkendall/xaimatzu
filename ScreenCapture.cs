@@ -384,7 +384,8 @@ namespace xaimatzu
         /// <param name="bitmap">The image to save.</param>
         /// <param name="path">The filepath to save the image to.</param>
         /// <param name="format">The image format.</param>
-        public void SaveScreenshot(Bitmap bitmap, string path, string format)
+        /// <returns>The filepath of the saved file.</returns>
+        public string SaveScreenshot(Bitmap bitmap, string path, string format)
         {
             try
             {
@@ -449,8 +450,10 @@ namespace xaimatzu
             }
             catch
             {
-
+                path = string.Empty;
             }
+
+            return path;
         }
     }
 }

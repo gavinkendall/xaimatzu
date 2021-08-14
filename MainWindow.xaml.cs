@@ -113,9 +113,12 @@ namespace xaimatzu
                 Regex rgxCommandLineOptionActiveWindowTitle = new Regex(@"^-activeWindowTitle=(?<ActiveWindowTitle>.+)$");
                 Regex rgxCommandLineOptionActiveWindowTitleMatch = new Regex(@"^-activeWindowTitleMatch=(?<ActiveWindowTitleMatch>.+)$"); // The command line option -activeWindowTitleMatch is the same as -activeWindowTitle (to maintain backwards compatibility with previous versions since -activeWindowTitle is the old command line option)
                 Regex rgxCommandLineOptionActiveWindowTitleNoMatch = new Regex(@"^-activeWindowTitleNoMatch=(?<ActiveWindowTitleNoMatch>.+)$"); // The reverse logic. So we do not match on active window title.
+                Regex rgxCommandLineOptionActiveWindowTitleMatchType = new Regex(@"^-activeWindowTitleMatchType=(?<ActiveWindowTitleMatchType>\d{1})$");
                 Regex rgxCommandLineOptionApplicationFocus = new Regex(@"^-applicationFocus=(?<ApplicationFocus>.+)$");
                 Regex rgxCommandLineOptionApplicationFocusDelayBefore = new Regex(@"^-applicationFocusDelayBefore=(?<ApplicationFocusDelayBefore>\d{1,5})$");
                 Regex rgxCommandLineOptionApplicationFocusDelayAfter = new Regex(@"^-applicationFocusDelayAfter=(?<ApplicationFocusDelayAfter>\d{1,5})$");
+                Regex rgxCommandLineOptionExecutablePath = new Regex(@"^-exePath=(?<ExecutablePath>.+)$");
+                Regex rgxCommandLineOptionExecutableArguments = new Regex(@"^-exeArgs=(?<ExecutableArguments>.+)$");
 
                 // Prepares all values ready for screen capture.
                 foreach (string arg in Environment.GetCommandLineArgs())
@@ -225,11 +228,32 @@ namespace xaimatzu
                         }
                     }
 
+                    if (rgxCommandLineOptionActiveWindowTitleMatchType.IsMatch(arg))
+                    {
+                        int.TryParse(rgxCommandLineOptionActiveWindowTitleMatchType.Match(arg).Groups["ActiveWindowTitleMatchType"].Value, out int activeWindowTitleMatchType);
+
+                        switch (activeWindowTitleMatchType)
+                        {
+                            case 1:
+                                _settings.radioButtonCaseSensitiveMatch.IsChecked = true;
+                                break;
+
+                            case 2:
+                                _settings.radioButtonCaseInsensitiveMatch.IsChecked = true;
+                                break;
+
+                            case 3:
+                                _settings.radioButtonRegularExpressionMatch.IsChecked = true;
+                                break;
+                        }
+                    }
+
                     if (rgxCommandLineOptionApplicationFocusDelayBefore.IsMatch(arg))
                     {
                         int.TryParse(rgxCommandLineOptionApplicationFocusDelayBefore.Match(arg).Groups["ApplicationFocusDelayBefore"].Value, out int applicationFocusDelayBefore);
 
                         _applicationFocusDelayBefore = applicationFocusDelayBefore;
+                        _settings.textBoxDelayBefore.Text = applicationFocusDelayBefore.ToString();
                     }
 
                     if (rgxCommandLineOptionApplicationFocusDelayAfter.IsMatch(arg))
@@ -237,6 +261,19 @@ namespace xaimatzu
                         int.TryParse(rgxCommandLineOptionApplicationFocusDelayAfter.Match(arg).Groups["ApplicationFocusDelayAfter"].Value, out int applicationFocusDelayAfter);
 
                         _applicationFocusDelayAfter = applicationFocusDelayAfter;
+                        _settings.textBoxDelayAfter.Text = applicationFocusDelayAfter.ToString();
+                    }
+
+                    if (rgxCommandLineOptionExecutablePath.IsMatch(arg))
+                    {
+                        checkBoxRunExecutable.IsChecked = true;
+
+                        _settings.textBoxExecutablePath.Text = rgxCommandLineOptionExecutablePath.Match(arg).Groups["ExecutablePath"].Value;
+                    }
+
+                    if (rgxCommandLineOptionExecutableArguments.IsMatch(arg))
+                    {
+                        _settings.textBoxExecutableArguments.Text = rgxCommandLineOptionExecutableArguments.Match(arg).Groups["ExecutableArguments"].Value;
                     }
                 }
 
@@ -259,7 +296,7 @@ namespace xaimatzu
                 {
                     if (arg.Equals("-capture"))
                     {
-                        _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked);
+                        _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked, (bool)checkBoxRunExecutable.IsChecked);
                     }
 
                     if (arg.Equals("-exit"))
@@ -367,7 +404,7 @@ namespace xaimatzu
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
-            _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked);
+            _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked, (bool)checkBoxRunExecutable.IsChecked);
         }
 
         private void SetActiveWindowTitleMatch(string activeWindowTitleTextComparison)

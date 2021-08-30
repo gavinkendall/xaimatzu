@@ -38,6 +38,9 @@ Hide while a screenshot is taken and the captured image is sent to the clipboard
 Hide while a screenshot is taken using %date% and %time% macro tags in the filename:\par
 \cf1\highlight2\f1\fs20 xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -capture -hide -save\cf0\highlight0\f0\fs22\par
 \par
+Take a screenshot and then repeatedly take a screenshot every 30 seconds (with the -repeat option) while hidden:\par
+\cf1\highlight2\f1\fs20 xaimatzu.exe -x=0 -y=0 -width=1440 -height=805 -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -capture -save -repeat=30 -hide\cf0\highlight0\f0\fs22\par
+\par
 Take a screenshot of the active window on 31 March 2021 at 4pm:\par
 \cf1\highlight2\f1\fs20 xaimatzu.exe -activeWindow -format=jpeg -file="My Screenshot on %date% at %time%.%format%" -date=2021-03-31 -time=16:00:00 -hide\cf0\highlight0\f0\fs22\par
 \par

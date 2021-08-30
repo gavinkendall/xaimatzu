@@ -32,13 +32,17 @@ namespace xaimatzu
     /// </summary>
     public partial class MainWindow : Window
     {
-        private System.Timers.Timer _timer;
+        private System.Timers.Timer _timerRepeatScreenshots;
+        private System.Timers.Timer _timerScheduledScreenshots;
+
         private Regex _rgxTime;
         private Help _help;
         private Settings _settings;
         private ScreenCapture _screenCapture;
         private ScreenshotPreview _screenshotPreview;
         private FormRegionSelectWithMouse _formRegionSelectWithMouse;
+
+        private delegate void CheckRepeatScreenshotDelegate();
         private delegate void CheckTimedScreenshotDelegate();
 
         private int _applicationFocusDelayBefore = 0;
@@ -51,11 +55,14 @@ namespace xaimatzu
         {
             InitializeComponent();
 
+            _timerRepeatScreenshots = new System.Timers.Timer(1000);
+            _timerRepeatScreenshots.Elapsed += _timerRepeatScreenshots_Elapsed;
+
             // We check the given date and time every second.
             // If they match with the current date/time then we take a screenshot.
             // We also use this timer elapsed method for updating the screenshot preview window (if it's visible).
-            _timer = new System.Timers.Timer(1000);
-            _timer.Elapsed += _timer_Elapsed;
+            _timerScheduledScreenshots = new System.Timers.Timer(1000);
+            _timerScheduledScreenshots.Elapsed += _timerScheduledScreenshots_Elapsed;
 
             // The various forms to construct.
             _help = new Help();
@@ -81,7 +88,7 @@ namespace xaimatzu
 
             _settings.textBoxMacro.Text = AppDomain.CurrentDomain.BaseDirectory + "screenshot.%format%";
 
-            _timer.Start();
+            _timerScheduledScreenshots.Start();
 
             Visibility = (Visibility)ParseCommandLineArguments();
         }
@@ -119,6 +126,7 @@ namespace xaimatzu
                 Regex rgxCommandLineOptionApplicationFocusDelayAfter = new Regex(@"^-applicationFocusDelayAfter=(?<ApplicationFocusDelayAfter>\d{1,5})$");
                 Regex rgxCommandLineOptionExecutablePath = new Regex(@"^-exePath=(?<ExecutablePath>.+)$");
                 Regex rgxCommandLineOptionExecutableArguments = new Regex(@"^-exeArgs=(?<ExecutableArguments>.+)$");
+                Regex rgxCommandLineOptionRepeat = new Regex(@"^-repeat=(?<Repeat>.+)$");
 
                 // Prepares all values ready for screen capture.
                 foreach (string arg in Environment.GetCommandLineArgs())
@@ -275,6 +283,12 @@ namespace xaimatzu
                     {
                         _settings.textBoxExecutableArguments.Text = rgxCommandLineOptionExecutableArguments.Match(arg).Groups["ExecutableArguments"].Value;
                     }
+
+                    if (rgxCommandLineOptionRepeat.IsMatch(arg))
+                    {
+                        _settings.checkBoxRepeat.IsChecked = true;
+                        _settings.textBoxRepeatSecond.Text = rgxCommandLineOptionRepeat.Match(arg).Groups["Repeat"].Value;
+                    }
                 }
 
                 foreach (string arg in Environment.GetCommandLineArgs())
@@ -296,7 +310,7 @@ namespace xaimatzu
                 {
                     if (arg.Equals("-capture"))
                     {
-                        _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked, (bool)checkBoxRunExecutable.IsChecked);
+                        buttonTakeScreenshot_Click(null, null);
                     }
 
                     if (arg.Equals("-exit"))
@@ -318,13 +332,28 @@ namespace xaimatzu
             return visibility;
         }
 
-        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void _timerRepeatScreenshots_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Dispatcher.Invoke(new CheckTimedScreenshotDelegate(CheckTimedScreenshot));
+            Dispatcher.Invoke(new CheckRepeatScreenshotDelegate(CheckRepeatScreenshots));
         }
 
-        private void CheckTimedScreenshot()
+        private void _timerScheduledScreenshots_Elapsed(object sender, ElapsedEventArgs e)
         {
+            Dispatcher.Invoke(new CheckTimedScreenshotDelegate(CheckScheduledScreenshot));
+        }
+
+        private void CheckRepeatScreenshots()
+        {
+            buttonTakeScreenshot_Click(null, null);
+        }
+
+        private void CheckScheduledScreenshot()
+        {
+            if (!(bool)_settings.checkBoxRepeat.IsChecked)
+            {
+                _timerRepeatScreenshots.Stop();
+            }
+
             DateTime dt = DateTime.Now;
 
             if (_settings.Date.SelectedDate.Value.ToString("yyyy-MM-dd").Equals(dt.ToString("yyyy-MM-dd")) &&
@@ -404,6 +433,17 @@ namespace xaimatzu
 
         private void buttonTakeScreenshot_Click(object sender, RoutedEventArgs e)
         {
+            if ((bool)_settings.checkBoxRepeat.IsChecked)
+            {
+                double.TryParse(_settings.textBoxRepeatSecond.Text, out double seconds);
+
+                if (seconds > 0)
+                {
+                    _timerRepeatScreenshots.Interval = 1000 * seconds;
+                    _timerRepeatScreenshots.Start();
+                }
+            }
+
             _settings.TakeScreenshot((bool)checkBoxClipboard.IsChecked, (bool)checkBoxSave.IsChecked, (bool)checkBoxRunExecutable.IsChecked);
         }
 

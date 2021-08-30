@@ -22,10 +22,13 @@
                     <Label x:Name="labelY" Content="Y:" HorizontalAlignment="Left" Margin="343,222,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="Black" Height="26" Width="25"/>
                     <Label x:Name="labelWidth" Content="Width:" HorizontalAlignment="Left" Margin="75,250,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="Black" Height="26" Width="59"/>
                     <Label x:Name="labelHeight" Content="Height:" Margin="343,250,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.538" Foreground="Black" HorizontalAlignment="Left" Width="63" Height="26"/>
-                    <TextBox x:Name="textBoxX" HorizontalAlignment="Left" Height="23" Margin="145,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
-                    <TextBox x:Name="textBoxY" Height="23" Margin="416,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"/>
-                    <TextBox x:Name="textBoxWidth" HorizontalAlignment="Left" Height="23" Margin="145,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
-                    <TextBox x:Name="textBoxHeight" Height="23" Margin="416,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"/>
+                    <TextBox x:Name="textBoxX" HorizontalAlignment="Left" Height="23" Margin="145,225,0,0" VerticalAlignment="Top" Width="158"/>
+                    <TextBox x:Name="textBoxY" Height="23" Margin="416,225,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"/>
+                    <TextBox x:Name="textBoxWidth" HorizontalAlignment="Left" Height="23" Margin="145,253,0,0" VerticalAlignment="Top" Width="158"/>
+                    <TextBox x:Name="textBoxHeight" Height="23" Margin="416,253,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="162"/>
+                    <TextBox x:Name="textBoxRepeatSecond" HorizontalAlignment="Left" Height="23" Margin="501,117,0,0" VerticalAlignment="Top" Width="29" Text="10"/>
+                    <Label x:Name="labelSecond" Content="second" HorizontalAlignment="Left" Margin="530,115,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="checkBoxRepeat" Content="Repeat every" HorizontalAlignment="Left" Margin="409,121,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="File Path">
@@ -43,7 +46,7 @@
                     <Label x:Name="labelDate" Content="Date:" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="37"/>
                     <DatePicker x:Name="Date" HorizontalAlignment="Left" Margin="10,126,0,0" VerticalAlignment="Top" IsTodayHighlighted="True" Width="120" Height="24"/>
                     <Label x:Name="labelTime" Content="Time:" HorizontalAlignment="Left" Margin="10,177,0,0" VerticalAlignment="Top" Foreground="Black" Height="26" Width="38"/>
-                    <TextBox x:Name="textBoxTime" Height="23" Margin="10,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="123"/>
+                    <TextBox x:Name="textBoxTime" Height="23" Margin="10,208,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="123"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Active Window Title">
@@ -57,9 +60,9 @@
                     <RadioButton x:Name="radioButtonCaseInsensitiveMatch" Content="Case Insensitive Match" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False"/>
                     <RadioButton x:Name="radioButtonRegularExpressionMatch" Content="Regular Expression Match" HorizontalAlignment="Left" Margin="10,202,0,0" VerticalAlignment="Top" IsEnabled="False"/>
                     <Label x:Name="labelRegularExpression" Content="Test Regular Expression:" HorizontalAlignment="Left" Margin="50,222,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <TextBox x:Name="textBoxRegularExpression" HorizontalAlignment="Left" Height="23" Margin="191,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="387" IsEnabled="False" TextChanged="textBoxRegularExpression_TextChanged"/>
+                    <TextBox x:Name="textBoxRegularExpression" HorizontalAlignment="Left" Height="23" Margin="191,225,0,0" VerticalAlignment="Top" Width="387" IsEnabled="False" TextChanged="textBoxRegularExpression_TextChanged"/>
                     <Label x:Name="labelTestValue" Content="Test Value:" HorizontalAlignment="Left" Margin="118,250,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <TextBox x:Name="textBoxTestValue" HorizontalAlignment="Left" Height="23" Margin="191,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="387" IsEnabled="False" TextChanged="textBoxTestValue_TextChanged"/>
+                    <TextBox x:Name="textBoxTestValue" HorizontalAlignment="Left" Height="23" Margin="191,253,0,0" VerticalAlignment="Top" Width="387" IsEnabled="False" TextChanged="textBoxTestValue_TextChanged"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Application Focus">
@@ -67,9 +70,9 @@
                     <CheckBox x:Name="checkBoxApplicationFocus" Content="Focus on selected application in process list when screenshot taken" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.114,-1.2" Click="checkBoxApplicationFocus_Click" Checked="checkBoxApplicationFocus_Checked"/>
                     <ListBox x:Name="listBoxProcessName" HorizontalAlignment="Left" Height="246" VerticalAlignment="Top" Width="384" IsEnabled="False" Margin="10,30,0,0"/>
                     <Label x:Name="labelDelayBefore" Content="Delay Before:" HorizontalAlignment="Left" Margin="399,30,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <TextBox x:Name="textBoxDelayBefore" Height="23" Margin="484,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="94" IsEnabled="False"/>
+                    <TextBox x:Name="textBoxDelayBefore" Height="23" Margin="484,33,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="94" IsEnabled="False"/>
                     <Label x:Name="labelDelayAfter" Content="Delay After:" HorizontalAlignment="Left" Margin="399,61,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <TextBox x:Name="textBoxDelayAfter" Height="23" Margin="484,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Width="94" IsEnabled="False"/>
+                    <TextBox x:Name="textBoxDelayAfter" Height="23" Margin="484,61,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="94" IsEnabled="False"/>
                     <Button x:Name="buttonRefreshProcessList" Content="Refresh List" HorizontalAlignment="Left" Margin="401,256,0,0" VerticalAlignment="Top" Width="83" Click="buttonRefreshProcessList_Click" IsEnabled="False"/>
                     <Button x:Name="buttonTestFocus" Content="Test Focus" HorizontalAlignment="Left" Margin="495,256,0,0" VerticalAlignment="Top" Width="83" Click="buttonTestFocus_Click" IsEnabled="False" RenderTransformOrigin="0.412,0.55"/>
                     <TextBox HorizontalAlignment="Left" Height="117" Margin="401,108,0,0" TextWrapping="Wrap" Text="When enabled, you can have an application's process be focused on during the time a screenshot is taken. Select a process from the list then adjust the delay before and after the focus is set (in milliseconds)." VerticalAlignment="Top" Width="179" Background="#FFFFFF92" IsUndoEnabled="False" IsReadOnly="True" Focusable="False" AllowDrop="False" IsTabStop="False"/>
@@ -79,9 +82,9 @@
                 <Grid Background="#FFFFFF">
                     <TextBox HorizontalAlignment="Left" Height="118" Margin="10,10,0,0" TextWrapping="Wrap" Text="You can specify the path of an executable (*.exe), batch script (*.bat), PowerShell script (*.ps1), AutoHotKey script (*.ahk), or any other application or script after a screenshot is saved to the specifield file (see File Path settings) so that the file is opened using the executable defined in the Executable Path field. The filepath of the file containing the screenshot can be passed to the executable by using the %filepath% macro tag in the Executable Arguments field. Xaimatzu will check to see if you have certain applications installed on the C:\ drive to determine what executable to use. This could be Microsoft Paint, Snagit Editor, or ShareX Image Editor. Make sure &quot;Save screenshot to file&quot; and &quot;Run executable&quot; are enabled." VerticalAlignment="Top" Width="568" Background="#FFFFFF92" AcceptsReturn="True" IsUndoEnabled="False" IsReadOnly="True" Focusable="False" IsTabStop="False" AllowDrop="False"/>
                     <Label Content="Executable Path:" HorizontalAlignment="Left" Margin="10,150,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="textBoxExecutablePath" Height="23" TextWrapping="Wrap" Margin="10,181,10,82"/>
+                    <TextBox x:Name="textBoxExecutablePath" Height="23" Margin="10,181,10,82"/>
                     <Label Content="Executable Arguments:" HorizontalAlignment="Left" Margin="10,222,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="textBoxExecutableArguments" Height="23" TextWrapping="Wrap" Margin="10,253,10,10"/>
+                    <TextBox x:Name="textBoxExecutableArguments" Height="23" Margin="10,253,10,10"/>
                 </Grid>
             </TabItem>
         </TabControl>

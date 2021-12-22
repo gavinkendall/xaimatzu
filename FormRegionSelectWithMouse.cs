@@ -202,6 +202,16 @@ namespace xaimatzu
 
             foreach (Screen screen in Screen.AllScreens)
             {
+                if (screen.Bounds.X < Left)
+                {
+                    Left = screen.Bounds.X;
+                }
+
+                if (screen.Bounds.Y < Top)
+                {
+                    Top = screen.Bounds.Y;
+                }
+
                 width += screen.Bounds.Width;
                 height += screen.Bounds.Height;
             }
@@ -214,7 +224,7 @@ namespace xaimatzu
 
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size, CopyPixelOperation.SourceCopy);
 
                 using (MemoryStream s = new MemoryStream())
                 {

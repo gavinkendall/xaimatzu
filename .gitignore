@@ -1,0 +1,8 @@
+.vs/
+XaimatzuSetup/Debug
+XaimatzuSetup/Release
+bin/
+obj/
+packages/
+build/xaimatzu.exe
+build/XaimatzuSetup.msi

@@ -213,15 +213,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Xaimatzu"
-        "ProductCode" = "8:{99FE4DB7-56B6-47C0-9D4A-8C31CAD0E0FF}"
-        "PackageCode" = "8:{C6EE108B-B2A6-4E66-8C3B-D1C588385487}"
+        "ProductCode" = "8:{3DA9D118-656E-4321-A1FB-F9E95C0D6FA0}"
+        "PackageCode" = "8:{AD520C48-32F0-4A96-BC61-5C370E5B665F}"
         "UpgradeCode" = "8:{16AE1885-233E-4B81-83D7-2A393D144FF5}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:3.3.0"
+        "ProductVersion" = "8:3.4.0"
         "Manufacturer" = "8:Gavin Kendall"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -763,7 +763,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A79592AA3153430E80FF229EFAF43210"
             {
-            "SourcePath" = "8:..\\obj\\Debug\\xaimatzu.exe"
+            "SourcePath" = "8:..\\obj\\Release\\xaimatzu.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_31ED523CF3464BE1BD92832AFCB6F7D5"

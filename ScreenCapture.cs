@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="ScreenCapture.cs" company="Gavin Kendall">
-//     Copyright (c) 2021 Gavin Kendall
+//     Copyright (c) 2022 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
 // <summary>A class for handling screen capture functionality. Imported from the Auto Screen Capture project.</summary>

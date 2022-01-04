@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="ScreenshotPreview.xaml.cs" company="Gavin Kendall">
-//     Copyright (c) 2021 Gavin Kendall
+//     Copyright (c) 2022 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
 // <summary>A window that shows a preview of the screenshot.</summary>

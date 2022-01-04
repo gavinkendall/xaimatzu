@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="FormRegionSelectWithMouse.cs" company="Gavin Kendall">
-//     Copyright (c) 2021 Gavin Kendall
+//     Copyright (c) 2022 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
 // <summary>A form that covers all the available screens so we can do a mouse-driven region select. Imported from the Auto Screen Capture project.</summary>
@@ -194,33 +194,20 @@ namespace xaimatzu
         /// </summary>
         public void LoadCanvas()
         {
-            Top = 0;
-            Left = 0;
-
-            int width = 0;
-            int height = 0;
-
-            foreach (Screen screen in Screen.AllScreens)
-            {
-                if (screen.Bounds.X < Left)
-                {
-                    Left = screen.Bounds.X;
-                }
-
-                if (screen.Bounds.Y < Top)
-                {
-                    Top = screen.Bounds.Y;
-                }
-
-                width += screen.Bounds.Width;
-                height += screen.Bounds.Height;
-            }
+            Rectangle canvas = SystemInformation.VirtualScreen;
 
             WindowState = FormWindowState.Normal;
-            Width = width;
-            Height = height;
 
-            Bitmap bitmap = new Bitmap(width, height);
+            Top = canvas.X;
+            Left = canvas.Y;
+            Width = canvas.Width;
+            Height = canvas.Height;
+
+            WindowState = FormWindowState.Normal;
+
+            Hide();
+
+            Bitmap bitmap = new Bitmap(Width, Height);
 
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {

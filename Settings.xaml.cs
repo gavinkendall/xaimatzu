@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="Settings.xaml.cs" company="Gavin Kendall">
-//     Copyright (c) 2022 Gavin Kendall
+//     Copyright (c) 2021-2022 Gavin Kendall
 // </copyright>
 // <author>Gavin Kendall</author>
 // <summary>A window for determining various settings.</summary>
